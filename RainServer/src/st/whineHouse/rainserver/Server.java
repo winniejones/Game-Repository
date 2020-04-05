@@ -10,6 +10,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Server {
     private int port;
@@ -24,6 +26,8 @@ public class Server {
     private final int MAX_PACKET_SIZE = 1024;
     private byte[] receivedDataBuffer = new byte[MAX_PACKET_SIZE * 10];
 
+    private Set<ServerClient> clients = new HashSet<>();
+
      public void start() {
         try {
             socket = new DatagramSocket(port);
@@ -31,10 +35,14 @@ public class Server {
             e.printStackTrace();
             return;
         }
+
+        System.out.println((String.format("Started server on port %s...", port)));
+
         listening = true;
 
         listeningThread = new Thread(this::listen, "RainServer-ListenThread");
         listeningThread.start();
+        System.out.println("Server is listening...");
      }
 
      private void listen() {
@@ -58,9 +66,10 @@ public class Server {
             RCDatabase database = RCDatabase.Deserialize(data);
 //            String username = database.findObject("root").findString("username").getString();
             process(database);
-        } else {
-            switch (data[0]) {
-                case 1:
+        } else if (data[0] == 0x40 && data[1] == 0x40) {
+            switch (data[2]) {
+                case 0x01:
+                    clients.add(new ServerClient(packet.getAddress(), packet.getPort()));
                     // connection packet
                     break;
                 case 2:
@@ -97,7 +106,15 @@ public class Server {
         System.out.println("\t" + address.getHostAddress() + ":" + port);
         System.out.println();
         System.out.println("\tContents:");
-        System.out.println("\t\t" + new String(data));
+        System.out.print("\t\t");
+
+        for (int i = 0; i < packet.getLength(); i++) {
+            System.out.printf("%x ", data[i]);
+            if ((i + 1) % 16 == 0)
+                System.out.print("\n\t\t");
+        }
+
+        System.out.println();
         System.out.println("----------------------------------------");
     }
 
