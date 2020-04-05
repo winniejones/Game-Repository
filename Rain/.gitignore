@@ -1,0 +1,13 @@
+*.class
+*.war
+*.ear
+
+hs_err_pid*
+
+/bin
+~/bin
+/.idea/
+/.settings/
+/bin/
+/bin/*
+*/bin/**
