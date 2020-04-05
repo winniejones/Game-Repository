@@ -57,6 +57,7 @@ public class Player extends Mob implements EventListener{
 	private AnimatedSprite left = new AnimatedSprite(SpriteSheet.player_left, 32, 32, 3);
 	private AnimatedSprite right = new AnimatedSprite(SpriteSheet.player_right, 32, 32, 3);
 	private AnimatedSprite animSprite = down;
+	private int gameScreenBoundry;
 
 	//TODO: This should be a class for weapons and change to one property 'private Weapon equippedWeapon'
 	private int weaponID =1;  // weaponID om 1 = arrow, 2 = wizard, 3 = ninjablade
@@ -74,19 +75,19 @@ public class Player extends Mob implements EventListener{
 	
 	@Deprecated
 	public Player(String name, Keyboard input){
+		gameScreenBoundry = (Game.width*Game.scale - Game.panelSize);
 		this.name = name;
 		this.input = input;
 		sprite = Sprite.player_up;
-		
 	}
 	
 	public Player(String name,int x, int y, Keyboard input){
+		gameScreenBoundry = (Game.width*Game.scale - Game.panelSize);
 		this.name = name;
 		this.x = x;
 		this.y = y;
 		this.input = input;
 		isColliding = false;
-		
 		xBound=1;
 		yBound=1;
 		//TODO Fixa s� den inte �r beroende av just projectile fire rate.
@@ -96,7 +97,7 @@ public class Player extends Mob implements EventListener{
 		ui = Game.getUIManager();
 		UIPanel panel = (UIPanel) new UIPanel(
 				new Vector2i(Game.width*Game.scale,0),
-				new Vector2i(Game.panelSize*Game.scale, Game.height*3)
+				new Vector2i(Game.panelSize*Game.scale, Game.height*Game.scale)
 		).setColor(0x4f4f4f); // TODO: Move this out to a personal preference file
 		ui.addPanel(panel);
 		
@@ -108,7 +109,7 @@ public class Player extends Mob implements EventListener{
 		panel.addComponent(nameLabel);
 		
 // healthbar placering och f�rgl�ggning
-		uiHealthBar = new UIProgressBar(new Vector2i(10,210),new Vector2i(80*3-20,15));		// helthbar (position (x,y), size (x,y))
+		uiHealthBar = new UIProgressBar(new Vector2i(10,210),new Vector2i(Game.panelSize*Game.scale-20,15));		// helthbar (position (x,y), size (x,y))
 		uiHealthBar.setColor(0x6a6a6a);
 		uiHealthBar.setForegroundColor(0x6add6a);
 		panel.addComponent(uiHealthBar);
@@ -247,7 +248,8 @@ public class Player extends Mob implements EventListener{
 	}
 	
 	public boolean onMousePressed(MousePressedEvent e){
-		if(Mouse.getX() > 660)
+		System.out.println(Mouse.getX());
+		if(Mouse.getX() > gameScreenBoundry)
 			return false;
 		if(e.getButton()== MouseEvent.BUTTON1){
 			shooting = true;
@@ -275,7 +277,6 @@ public class Player extends Mob implements EventListener{
 	public void render(Screen screen){
 		int flip =0;
 		sprite = animSprite.getSprite();
-		System.out.println(Mouse.getX());
 		screen.renderMob((x - 16),(y - 16), sprite, flip);
 //		screen.fillRect((x - 16),(y - 16),32,32,0,false);
 	}

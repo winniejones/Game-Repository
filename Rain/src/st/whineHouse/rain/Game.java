@@ -24,6 +24,7 @@ import st.whineHouse.rain.input.Mouse;
 import st.whineHouse.rain.level.Level;
 import st.whineHouse.rain.level.TileCoordinate;
 import st.whineHouse.rain.level.collisionHandling.Grid;
+import st.whineHouse.rain.net.Client;
 import st.whineHouse.rain.net.player.NetPlayer;
 import st.whineHouse.raincloud.serialization.RCDatabase;
 import st.whineHouse.raincloud.serialization.RCField;
@@ -57,16 +58,14 @@ public class Game extends Canvas implements Runnable, EventListener {
 	private static UIManager uiManager;			//Skapar en menyhanterare
 	private Screen screen;						//Skapar en screen som ska in i javarutan.
 	protected Font font;						//Egen klass font som laddas in.
-	private BufferedImage image; // new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);	//En bild buffrare som ritar upp bilder av RGB typ
-	private int[] pixels; //((DataBufferInt)image.getRaster().getDataBuffer()).getData();		//Array som hanterar databuffern som kommer från våran bildbuffrare.
+	private BufferedImage image;
+	private int[] pixels;
 	private List<Layer> layerStack = new ArrayList<Layer>();
 	
 	/**
 	 * Här skapas allt som ska styras av Game-klassen
 	 */
 	public Game(){
-//		Dimension size = new Dimension(width*scale + panelSize * scale, height*scale);
-//		setPreferredSize(size);
 		setSize();
 		screen = new Screen(width, height);
 		uiManager = new UIManager();
@@ -74,6 +73,11 @@ public class Game extends Canvas implements Runnable, EventListener {
 		key = new Keyboard();
 
 		// TODO: Connect to server here
+		Client client = new Client("localhost", 8192);
+		client.connect();
+
+		RCDatabase db = RCDatabase.DeserializeFromFile("res/data/screen.bin");
+		client.send(db);
 
 		level = Level.spawn;
 		//level1 = Level.upper;
@@ -100,6 +104,7 @@ public class Game extends Canvas implements Runnable, EventListener {
 			width = obj.findField("width").getInt();
 			height = obj.findField("height").getInt();
 			scale = obj.findField("scale").getInt();
+			panelSize = obj.findField("panelSize").getInt();
 		}
 
 		Dimension size = new Dimension(width*scale + panelSize * scale, height*scale);
@@ -107,6 +112,11 @@ public class Game extends Canvas implements Runnable, EventListener {
 
 		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
+		System.out.println(
+				"width: " +  width +"\n" +
+				"height: " +  height +"\n" +
+				"scale: " +  scale
+		);
 	}
 
 	private void save() {
@@ -115,6 +125,7 @@ public class Game extends Canvas implements Runnable, EventListener {
 		obj.addField(RCField.Integer("width", width));
 		obj.addField(RCField.Integer("height", height));
 		obj.addField(RCField.Integer("scale", scale));
+		obj.addField(RCField.Integer("panelSize", panelSize));
 		db.addObject(obj);
 
 		db.serializeToFile("res/data/screen.bin");
