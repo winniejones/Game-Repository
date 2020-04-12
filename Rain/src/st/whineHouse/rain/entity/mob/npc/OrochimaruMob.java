@@ -1,5 +1,7 @@
-package st.whineHouse.rain.entity.mob;
+package st.whineHouse.rain.entity.mob.npc;
 
+import st.whineHouse.rain.entity.mob.Mob;
+import st.whineHouse.rain.entity.spawner.ParticleSpawner;
 import st.whineHouse.rain.gx.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.gx.Sprite;
@@ -13,12 +15,12 @@ import st.whineHouse.rain.gx.SpriteSheet;
  * @author Winston Jones
  *
  */
-public class Dummy extends Mob {
+public class OrochimaruMob extends Mob {
 	
-	private AnimatedSprite down = new AnimatedSprite(SpriteSheet.dummy_down, 32, 32, 3);
-	private AnimatedSprite up = new AnimatedSprite(SpriteSheet.dummy_up, 32, 32, 3);
-	private AnimatedSprite left = new AnimatedSprite(SpriteSheet.dummy_left, 32, 32, 3);
-	private AnimatedSprite right = new AnimatedSprite(SpriteSheet.dummy_right, 32, 32, 3);
+	private AnimatedSprite down = new AnimatedSprite(SpriteSheet.orochimaru_down, 32, 32, 3);
+	private AnimatedSprite up = new AnimatedSprite(SpriteSheet.orochimaru_up, 32, 32, 3);
+	private AnimatedSprite left = new AnimatedSprite(SpriteSheet.orochimaru_left, 32, 32, 3);
+	private AnimatedSprite right = new AnimatedSprite(SpriteSheet.orochimaru_right, 32, 32, 3);
 	
 	private AnimatedSprite animSprite = down;
 	
@@ -26,18 +28,29 @@ public class Dummy extends Mob {
 
 	private int xa = 0, ya = 0;
 	
-	public Dummy(int x,int y){
+	public OrochimaruMob(int x,int y){
 		this.x = x <<4;
 		this.y = y <<4;
 		this.xBound = xBound;
 		this.yBound = yBound;
 		yOff = 1;
 		xOff = 1;
-		sprite = Sprite.dummy;
+		sprite = Sprite.orochimaru;
+		health = 100;
 	}
 	
 	public void update() {
 		time++;
+//		mobMoving(time);
+		
+		if(health<=0){
+			level.add(new ParticleSpawner((int)x, (int)y, 300, 700, level, Sprite.particle_blood));
+			remove();
+		}
+
+	}
+	
+	private void mobMoving(int time){
 		if(time % (random.nextInt(50)+30) == 0){
 			xa = random.nextInt(3)-1;
 			ya = random.nextInt(3)-1;
@@ -70,7 +83,6 @@ public class Dummy extends Mob {
 		}else{
 			walking = false;
 		}
-
 	}
 
 	public void render(Screen screen) {

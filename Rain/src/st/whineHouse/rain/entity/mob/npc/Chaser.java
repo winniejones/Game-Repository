@@ -1,7 +1,8 @@
-package st.whineHouse.rain.entity.mob;
+package st.whineHouse.rain.entity.mob.npc;
 
 import java.util.List;
 
+import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.gx.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.gx.Sprite;

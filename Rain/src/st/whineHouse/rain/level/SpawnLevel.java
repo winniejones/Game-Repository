@@ -11,8 +11,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import st.whineHouse.rain.entity.mob.*;
-import st.whineHouse.rain.level.collisionHandling.Quadtree;
+import st.whineHouse.rain.entity.mob.npc.DeidaraMob;
+import st.whineHouse.rain.entity.mob.npc.HirukoMob;
+import st.whineHouse.rain.entity.mob.npc.ItachiMob;
+import st.whineHouse.rain.entity.mob.npc.OrochimaruMob;
 
 public class SpawnLevel extends Level{
 	

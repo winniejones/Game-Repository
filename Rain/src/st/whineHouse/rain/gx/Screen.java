@@ -3,9 +3,10 @@ package st.whineHouse.rain.gx;
 import java.util.List;
 import java.util.Random;
 
-import st.whineHouse.rain.entity.mob.Chaser;
+import st.whineHouse.rain.Game;
+import st.whineHouse.rain.entity.mob.npc.Chaser;
 import st.whineHouse.rain.entity.mob.Mob;
-import st.whineHouse.rain.entity.mob.Star;
+import st.whineHouse.rain.entity.mob.npc.Star;
 import st.whineHouse.rain.entity.projectile.Projectile;
 import st.whineHouse.rain.level.tile.Tile;
 import st.whineHouse.rain.utilities.Vector2i;
@@ -124,7 +125,7 @@ public class Screen {
 	public void renderMob(int xp, int yp, Mob mob){
 		xp -= xOffset;
 		yp -= yOffset;
-		int pixelSize = 32;
+		int pixelSize = Game.mobPixelSize;
 		for(int y =0; y< pixelSize; y++){
 			int ya = y + yp;
 			int ys = y;
@@ -133,7 +134,7 @@ public class Screen {
 				int xs = x;
 				if(xa < -pixelSize || xa >= width || ya < 0 || ya >= height) break;
 				if (xa < 0) xa = 0;
-				int col = mob.getSprite().pixels[xs+ys*32];
+				int col = mob.getSprite().pixels[xs+ys*pixelSize];
 				if((mob instanceof Star) && col == 0xff472bbf) col = 0xffba0015;
 				if((mob instanceof Star) && col == 0xfffdff60) col = 0xff33332e;
 				if((mob instanceof Chaser) && col == 0xff472bbf) col = 0xff33332e; // CHASER COLORING
@@ -145,7 +146,7 @@ public class Screen {
 	public void renderMob(int xp, int yp, Sprite sprite, int flip){
 		xp -= xOffset;
 		yp -= yOffset;
-		int pixelSize = 32;
+		int pixelSize = Game.mobPixelSize;
 		for(int y =0; y< pixelSize; y++){
 			int ya = y + yp;
 			int ys = y;
@@ -156,7 +157,7 @@ public class Screen {
 				if(flip==1||flip==3) xs = 31-x;
 				if(xa < -pixelSize || xa >= width || ya < 0 || ya >= height) break;
 				if (xa < 0) xa = 0;
-				int col = sprite.pixels[xs+ys*32];
+				int col = sprite.pixels[xs+ys*pixelSize];
 				if(col != ALPHA_COL && col != 0xff78c380) pixels[xa + ya*width]= col;
 			}
 		}

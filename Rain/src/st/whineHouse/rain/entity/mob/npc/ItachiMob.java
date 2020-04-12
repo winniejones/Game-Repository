@@ -1,21 +1,19 @@
-package st.whineHouse.rain.entity.mob;
+package st.whineHouse.rain.entity.mob.npc;
 
-import java.util.List;
 import st.whineHouse.rain.entity.Entity;
-import st.whineHouse.rain.entity.mob.Mob.Direction;
-import st.whineHouse.rain.entity.particle.Particle;
-import st.whineHouse.rain.entity.projectile.NinjaBlade;
+import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.projectile.WizzardArrow;
 import st.whineHouse.rain.entity.spawner.ParticleSpawner;
 import st.whineHouse.rain.gx.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.gx.Sprite;
 import st.whineHouse.rain.gx.SpriteSheet;
-import st.whineHouse.rain.utilities.Debug;
 import st.whineHouse.rain.utilities.RayCastingResult;
 import st.whineHouse.rain.utilities.Vector2i;
 
-public class ItachiMob extends Mob{
+import java.util.List;
+
+public class ItachiMob extends Mob {
 	
 	private AnimatedSprite down = new AnimatedSprite(SpriteSheet.itachi_down, 32, 32, 3);
 	private AnimatedSprite up = new AnimatedSprite(SpriteSheet.itachi_up, 32, 32, 3);

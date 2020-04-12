@@ -1,8 +1,9 @@
-package st.whineHouse.rain.entity.mob;
+package st.whineHouse.rain.entity.mob.npc;
 
 import java.util.List;
 
 import st.whineHouse.rain.entity.Entity;
+import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.particle.Particle;
 import st.whineHouse.rain.entity.projectile.NinjaBlade;
 import st.whineHouse.rain.entity.projectile.WizzardArrow;
@@ -22,7 +23,7 @@ import st.whineHouse.rain.utilities.Vector2i;
  * @author Winston Jones
  *
  */
-public class Shooter extends Mob{
+public class Shooter extends Mob {
 	
 	private AnimatedSprite down = new AnimatedSprite(SpriteSheet.itachi_down, 32, 32, 3);
 	private AnimatedSprite up = new AnimatedSprite(SpriteSheet.itachi_up, 32, 32, 3);

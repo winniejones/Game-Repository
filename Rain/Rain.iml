@@ -27,5 +27,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="library" name="src" level="project" />
     <orderEntry type="module" module-name="RainCloud" />
+    <orderEntry type="module" module-name="RainServer" />
   </component>
 </module>

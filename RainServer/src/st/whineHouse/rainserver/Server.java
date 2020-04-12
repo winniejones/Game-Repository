@@ -1,5 +1,11 @@
 package st.whineHouse.rainserver;
 
+import st.whineHouse.rain.entity.projectile.Projectile;
+import st.whineHouse.rain.net.player.NetPlayer;
+import st.whineHouse.raincloud.net.packet.LoginPacket;
+import st.whineHouse.raincloud.net.packet.LogoutPacket;
+import st.whineHouse.raincloud.net.packet.MovePacket;
+import st.whineHouse.raincloud.net.packet.ProjectilePacket;
 import st.whineHouse.raincloud.serialization.RCDatabase;
 import st.whineHouse.raincloud.serialization.RCField;
 import st.whineHouse.raincloud.serialization.RCObject;
@@ -10,6 +16,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,8 +34,9 @@ public class Server {
     private byte[] receivedDataBuffer = new byte[MAX_PACKET_SIZE * 10];
 
     private Set<ServerClient> clients = new HashSet<>();
+    private Set<Projectile> projectiles = new HashSet<>();
 
-     public void start() {
+    public void start() {
         try {
             socket = new DatagramSocket(port);
         } catch (SocketException e) {
@@ -43,9 +51,9 @@ public class Server {
         listeningThread = new Thread(this::listen, "RainServer-ListenThread");
         listeningThread.start();
         System.out.println("Server is listening...");
-     }
+    }
 
-     private void listen() {
+    private void listen() {
         while (listening) {
             DatagramPacket packet = new DatagramPacket(receivedDataBuffer, MAX_PACKET_SIZE);
             try {
@@ -55,38 +63,92 @@ public class Server {
             }
             process(packet);
         }
-     }
-
-     private void process(DatagramPacket packet) {
-        byte[] data = packet.getData();
-        InetAddress address = packet.getAddress();
-        int port = packet.getPort();
-        dump(packet);
-        if(new String(data, 0, 4).equals("RCDB")) {
-            RCDatabase database = RCDatabase.Deserialize(data);
-//            String username = database.findObject("root").findString("username").getString();
-            process(database);
-        } else if (data[0] == 0x40 && data[1] == 0x40) {
-            switch (data[2]) {
-                case 0x01:
-                    clients.add(new ServerClient(packet.getAddress(), packet.getPort()));
-                    // connection packet
-                    break;
-                case 2:
-                    // ping packet
-                    break;
-                case 3:
-                    // login attempt packet
-                    break;
-            }
-        }
-     }
-
-    private void process(RCDatabase database) {
-
     }
 
-     public void send(byte[] data, InetAddress address, int port) {
+    private void process(RCDatabase database) {
+        dump(database);
+    }
+
+
+    private void process(DatagramPacket dataPacket) {
+        byte[] data = dataPacket.getData();
+        InetAddress address = dataPacket.getAddress();
+        int port = dataPacket.getPort();
+        dump(dataPacket);
+        if(new String(data, 0, 4).equals("RCDB")) {
+            RCDatabase database = RCDatabase.Deserialize(data);
+            process(database);
+        } else if (data[0] == 0x40 && data[1] == 0x40) {
+            byte[] filteredData = Arrays.copyOfRange(data, 3, data.length -3);
+            switch (data[2]) {
+                case 0: // Connection
+                    System.out.println("Client connected");
+                    break;
+                case 1: //Login
+                    LoginPacket loginPacket = new LoginPacket(filteredData);
+                    System.out.println("Login..");
+                    ServerClient client = new ServerClient(loginPacket.getUsername(), loginPacket.getX(), loginPacket.getY(), address, port);
+                    addConnection(client, loginPacket);
+                    break;
+                case 2: // Disconnect
+                    LogoutPacket logoutPacket = new LogoutPacket(filteredData);
+                    System.out.println("[" + address.getHostAddress() + ":" + port + "] "
+                            + (logoutPacket).getUsername() + " has left...");
+                    this.removeConnection(logoutPacket);
+                    break;
+                case 3: // move packet
+                    MovePacket movePacket = new MovePacket(filteredData);
+                    System.out.println("Handle move packet from " + movePacket.getUsername());
+                    handleMove(movePacket);
+                    break;
+                case 4: // error
+                    break;
+                case 5: // projectiles
+                    ProjectilePacket projectilePacket = new ProjectilePacket(filteredData);
+                    projectilePacket.writeData(this);
+                    break;
+                default: System.out.println("Recieved packet but cannot handle response");
+            }
+        }
+    }
+
+    private void addConnection(ServerClient addedClient, LoginPacket loginPacket) {
+        boolean alreadyConnected = false;
+        for(ServerClient client: clients) {
+            if(addedClient.username.equalsIgnoreCase(client.username)) {
+                if(client.address == null) {
+                    client.address = addedClient.address;
+                }
+                if(client.port == -1) {
+                    client.port = addedClient.port;
+                }
+                System.out.println(client.username + " is already connected");
+                alreadyConnected = true;
+            } else {
+                // send packet to other playas so they know whats up
+                send(loginPacket.getData(), client.address, client.port);
+
+                loginPacket = new LoginPacket(client.username, client.x, client.y);
+                send(loginPacket.getData(), addedClient.address, addedClient.port);
+            }
+        }
+        if(!alreadyConnected) {
+            clients.add(addedClient);
+        }
+    }
+
+    private void removeConnection(LogoutPacket logoutPacket){
+        clients.removeIf(player -> player.username.equalsIgnoreCase(logoutPacket.getUsername()));
+        logoutPacket.writeData(this);
+    }
+
+    public void broadcastToClients(byte[] data) {
+        for (ServerClient p : clients) {
+            send(data, p.address, p.port);
+        }
+    }
+
+    public void send(byte[] data, InetAddress address, int port) {
         assert(socket.isConnected());
         DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
         try {
@@ -94,7 +156,31 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
-     }
+    }
+
+    public ServerClient getPlayerMP(String username) {
+        for (ServerClient client : this.clients) {
+            if (client.username.equals(username)) {
+                return client;
+            }
+        }
+        return null;
+    }
+
+
+    private void handleMove(MovePacket packet) {
+        ServerClient client = getPlayerMP(packet.getUsername());
+        if ( client != null) {
+            // Save client state
+            ServerClient player = getPlayerMP(client.username);
+            player.x = packet.getX();
+            player.y = packet.getY();
+            player.speed = packet.getSpeed();
+            player.walking = packet.isWalking();
+            player.movingDir = packet.getMovingDir();
+            packet.writeData(this);
+        }
+    }
 
     private void dump(DatagramPacket packet) {
         byte[] data = packet.getData();

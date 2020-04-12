@@ -2,10 +2,12 @@ package st.whineHouse.rain.entity.mob;
 
 import java.awt.Rectangle;
 
+import st.whineHouse.rain.Game;
 import st.whineHouse.rain.entity.Entity;
 import st.whineHouse.rain.entity.projectile.*;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.level.Level;
+import st.whineHouse.raincloud.net.packet.ProjectilePacket;
 
 /**
  * Mob-klassen som är en Entity-klass
@@ -17,8 +19,8 @@ import st.whineHouse.rain.level.Level;
 public abstract class Mob extends Entity{
 	
 
-	protected boolean moving = false;
-	protected boolean walking = false;
+	public boolean walking = false;
+	protected int numOfSteps = 0;
 	public int health;
 	protected Projectile projectile;
 	protected int weaponID;
@@ -39,9 +41,10 @@ public abstract class Mob extends Entity{
 		if( xa != 0 && ya != 0){
 			move(xa,0);
 			move(0,ya);
+			numOfSteps--;
 			return;
 		}
-		
+		numOfSteps++;
 		if(xa > 0) dir=Direction.RIGHT;
 		if(xa < 0) dir=Direction.LEFT;
 		if(ya > 0) dir=Direction.DOWN;
@@ -95,7 +98,11 @@ public abstract class Mob extends Entity{
 		 * if(weaponID == 3) projectile = new WizzardProjectile(x, y, dir);
 		 * 
 		 * */
-		level.add(projectile);
+
+		// TODO: Send to server before adding
+		ProjectilePacket projectilePacket = new ProjectilePacket(weaponID,x,y,dir);
+		projectilePacket.writeData(Game.game.client);
+		//level.add(projectile);
 	}
 	
 	

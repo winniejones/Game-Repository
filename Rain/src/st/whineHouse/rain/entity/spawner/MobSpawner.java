@@ -1,6 +1,6 @@
 package st.whineHouse.rain.entity.spawner;
 
-import st.whineHouse.rain.entity.mob.KisuneMob;
+import st.whineHouse.rain.entity.mob.npc.KisuneMob;
 import st.whineHouse.rain.entity.mob.Mob; 
 import st.whineHouse.rain.level.Level;
 

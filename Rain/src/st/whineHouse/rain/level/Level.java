@@ -7,14 +7,14 @@ import java.util.List;
 
 import st.whineHouse.rain.entity.Entity;
 import st.whineHouse.rain.entity.mob.Mob;
-import st.whineHouse.rain.entity.mob.Player;
+import st.whineHouse.rain.entity.mob.player.Player;
 import st.whineHouse.rain.entity.particle.Particle;
 import st.whineHouse.rain.entity.projectile.Projectile;
 import st.whineHouse.rain.events.Event;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.gx.layers.Layer;
-import st.whineHouse.rain.level.collisionHandling.Grid;
 import st.whineHouse.rain.level.tile.Tile;
+import st.whineHouse.rain.net.player.NetPlayer;
 import st.whineHouse.rain.utilities.RayCastingResult;
 import st.whineHouse.rain.utilities.Vector2i;
 
@@ -106,10 +106,19 @@ public class Level extends Layer{
 		}
 		
 		entitySize = allEntetieSize(entities,projectiles,players);
+		removeProjectiles();
 		remove();
 	}
-	
-		public void onEvent(Event event){
+
+	private void removeProjectiles() {
+		projectiles.removeIf(Entity::isRemoved);
+		/*for (int i = 0; i < projectiles.size(); i++) {
+			Projectile p = projectiles.get(i);
+			if (p.isRemoved()) projectiles.remove(i);
+		}*/
+	}
+
+	public void onEvent(Event event){
 			getClientPlayer().onEvent(event);
 		}
 	
@@ -223,7 +232,7 @@ public class Level extends Layer{
 	/**
 	 * Funktion för att lägga till entiteter på leveln.
 	 */
-	public void add(Entity e){
+	public synchronized void add(Entity e){
 		e.init(this);
 		if(e instanceof Particle){
 			particles.add((Particle)e);
@@ -240,7 +249,7 @@ public class Level extends Layer{
 		}	
 	}
 
-	public void addPlayer(Mob player) {
+	public synchronized void addPlayer(Mob player) {
 		player.init(this);
 		players.add(player);
 	}
@@ -257,26 +266,11 @@ public class Level extends Layer{
 	public List<Mob> getMobs(){
 		return mobs;
 	}
-	
-	public Entity getEntities(int index){
-		
-		return entities.get(index);
-	}
-	
-	public Mob getPlayerAt(int index){
-		return players.get(index);
-	}
-	
-	public Player getClientPlayer(){
+
+	public Player getClientPlayer() {
 		return (Player) players.get(0);
 	}
-	
-	public Mob getMobsAt(int index){
-		return mobs.get(index);
-	}
-	
-	
-	
+
 /**
  * Hela den här metoden är A* algoritmen. 
  * Den tar hjälp av klassen Node och Vector2i för att beräkna vilken väg som är bäst att ta från en position till en annan.
@@ -416,7 +410,7 @@ public class Level extends Layer{
 	/**
 	 * Getter för att hämta lista på entiteter på leveln.
 	 */
-	public List<Entity> getEntities(){
+	public synchronized List<Entity> getEntities(){
 		List<Entity> result = new ArrayList<Entity>();
 		for(int i =0; i < entities.size(); i++){
 			Entity entity = entities.get(i);
@@ -430,7 +424,7 @@ public class Level extends Layer{
 	 * 
 	 * Ej implementerad.
 	 */
-	public List<Entity> getEntities(Entity e, int radius){
+	public synchronized List<Entity> getEntities(Entity e, int radius){
 		List<Entity> result = new ArrayList<Entity>();
 		int ex = (int)e.getX();
 		int ey = (int)e.getY();
@@ -473,7 +467,7 @@ public class Level extends Layer{
 	 * 
 	 * Ej implementerad.
 	 */
-	public List<Mob> getPlayers(Entity e, int radius){
+	public synchronized List<Mob> getPlayers(Entity e, int radius){
 		List<Mob> result = new ArrayList<>();
 		int ex = e.getX();
 		int ey = e.getY();
@@ -501,6 +495,21 @@ public class Level extends Layer{
 		if(tiles[x+y*width]==Tile.col_spawn_hedge) return Tile.spawn_hedge;
 		if(tiles[x+y*width]==Tile.col_spawn_water) return Tile.spawn_water;
 		return Tile.voidTile;
+	}
+
+	public synchronized void movePlayer(String username, int x, int y, int speed, boolean walking) {
+		players.forEach(player -> {
+			if(((NetPlayer) player).getName().equalsIgnoreCase(username)){
+				player.x = x;
+				player.y = y;
+				((Player) player).speed = speed;
+				player.walking = walking;
+			}
+		});
+	}
+
+	public synchronized void removePlayer(String username) {
+		players.removeIf(player -> ((NetPlayer) player).getName().equalsIgnoreCase(username));
 	}
 
 }

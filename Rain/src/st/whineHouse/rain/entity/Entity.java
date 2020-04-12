@@ -2,14 +2,11 @@ package st.whineHouse.rain.entity;
 
 import java.awt.Rectangle;
 import java.util.Random;
-import st.whineHouse.rain.entity.mob.Player;
-import st.whineHouse.rain.entity.mob.Mob;
-import st.whineHouse.rain.entity.projectile.Projectile;
+
 import st.whineHouse.rain.gx.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.gx.Sprite;
 import st.whineHouse.rain.level.Level;
-import st.whineHouse.rain.utilities.Vector2i;
 
 /**
  * Entity-klass
@@ -25,7 +22,7 @@ import st.whineHouse.rain.utilities.Vector2i;
  */
 public class Entity {
 	
-	protected int x, y;
+	public int x, y;
 	private boolean removed = false;
 	protected Level level;
 	protected final Random random = new Random();
@@ -36,8 +33,7 @@ public class Entity {
     
 	//TODO: Fixa detta
 	protected int xBound, yBound, xOff, yOff;
-	protected boolean entCol;
-	
+
 	//Constructor
 	public Entity(){
 		

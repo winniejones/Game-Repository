@@ -1,8 +1,8 @@
-package st.whineHouse.rain.entity.mob;
+package st.whineHouse.rain.entity.mob.npc;
 
 import java.util.List;
 
-import st.whineHouse.rain.entity.mob.Mob.Direction;
+import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.spawner.ParticleSpawner;
 import st.whineHouse.rain.gx.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
@@ -19,7 +19,7 @@ import st.whineHouse.rain.utilities.Vector2i;
  * @author winston_8
  *
  */
-public class Star extends Mob{
+public class HirukoMob extends Mob {
 	private AnimatedSprite down = new AnimatedSprite(SpriteSheet.hiruko_down, 32, 32, 3);
 	private AnimatedSprite up = new AnimatedSprite(SpriteSheet.hiruko_up, 32, 32, 3);
 	private AnimatedSprite left = new AnimatedSprite(SpriteSheet.hiruko_left, 32, 32, 3);
@@ -28,36 +28,48 @@ public class Star extends Mob{
 	private AnimatedSprite animSprite = down;
 	
 	private double xa = 0, ya = 0;
-	private double speed = 0.95;
+	private double speed = 0.85;
 	private List<Node> path = null;
 	private int time=0;
 	
-	public Star(int x, int y){
+	public HirukoMob(int x, int y){
 		this.x = x << 4;
 		this.y = y << 4;
 		sprite = Sprite.hiruko;
 		health = 70;
 	}
 	
-	private void move(){
+	private void move(int time){
 		xa = 0;
 		ya = 0;
-		int px = level.getPlayerAt(0).getX();
-		int py = level.getPlayerAt(0).getY();
-		Vector2i start = new Vector2i(getX() >> 4, getY() >> 4);
-		Vector2i destination = new Vector2i(px >> 4, py >> 4);
-		if(time % 3 == 0) path = level.findPath(start, destination);
-		if(path != null){
-			if(path.size()>0){
-				Vector2i vec = path.get(path.size() - 1).tile;
-				if((int)x < vec.getX() << 4) xa+=speed;
-				if((int)x > vec.getX() << 4) xa-=speed;
-				if((int)y < vec.getY() << 4) ya+=speed;
-				if((int)y > vec.getY() << 4) ya-=speed;
+		List<Mob> players = level.getPlayers(this, 70);
+		if(players.size() > 0){
+			int px = level.getClientPlayer().getX();
+			int py = level.getClientPlayer().getY();
+			Vector2i start = new Vector2i(getX() >> 4, getY() >> 4);
+			Vector2i destination = new Vector2i(px >> 4, py >> 4);
+			if(time % 3 == 0) path = level.findPath(start, destination);
+			if(path != null){
+				if(path.size()>0){
+					Vector2i vec = path.get(path.size() - 1).tile;
+					if((int)x < vec.getX() << 4) xa+=speed;
+					if((int)x > vec.getX() << 4) xa-=speed;
+					if((int)y < vec.getY() << 4) ya+=speed;
+					if((int)y > vec.getY() << 4) ya-=speed;
+				}
+			}
+		} else if(players.size() == 0){
+			if(time % (random.nextInt(50)+30) == 0){
+				xa = random.nextInt(3)-1;
+				ya = random.nextInt(3)-1;
+				if(random.nextInt(3)==0){
+					xa = 0;
+					ya = 0;
+				}
 			}
 		}
 		if(xa !=0 || ya !=0){
-			move(xa,ya);
+//			move(xa,ya);
 			walking = true;
 		}else{
 			walking = false;
@@ -65,7 +77,7 @@ public class Star extends Mob{
 	}
 	
 	public void update() {
-		move();
+		move(time);
 		time++;
 		mobMoving(time);
 		
@@ -117,3 +129,4 @@ public class Star extends Mob{
 	}
 
 }
+

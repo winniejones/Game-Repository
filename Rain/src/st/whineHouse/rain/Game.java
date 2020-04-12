@@ -9,10 +9,11 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JFrame;
 
-import st.whineHouse.rain.entity.mob.Player;
+import st.whineHouse.rain.entity.mob.player.Player;
 import st.whineHouse.rain.events.Event;
 import st.whineHouse.rain.events.EventListener;
 import st.whineHouse.rain.gx.Font;
@@ -23,9 +24,9 @@ import st.whineHouse.rain.input.Keyboard;
 import st.whineHouse.rain.input.Mouse;
 import st.whineHouse.rain.level.Level;
 import st.whineHouse.rain.level.TileCoordinate;
-import st.whineHouse.rain.level.collisionHandling.Grid;
 import st.whineHouse.rain.net.Client;
 import st.whineHouse.rain.net.player.NetPlayer;
+import st.whineHouse.raincloud.net.packet.LoginPacket;
 import st.whineHouse.raincloud.serialization.RCDatabase;
 import st.whineHouse.raincloud.serialization.RCField;
 import st.whineHouse.raincloud.serialization.RCObject;
@@ -41,6 +42,8 @@ import st.whineHouse.raincloud.serialization.RCObject;
 
 public class Game extends Canvas implements Runnable, EventListener {
 	private static final long serialVersionUID = 1L;
+	public static Game game;
+	public static final int mobPixelSize = 32;
 
 	public static int panelSize = 80;			//Storlek på panelen till sidan av spelet
 	public static int width = 900-panelSize;	//Bredd på själva applikationsfönstret
@@ -51,10 +54,12 @@ public class Game extends Canvas implements Runnable, EventListener {
 	private Thread gameThread;					//Skapa en tråd för hantering av spel
 	private JFrame frame;						//Skapa en java ruta
 	private Keyboard key;						//Skapa en tangentbordsobjekt
-	private Level level, level1;						//Skapa level där spelet ska utspela sig på.
-	private Player player;						//Skapa spalre för den som körspelet.
+	public Level level, level1;						//Skapa level där spelet ska utspela sig på.
+	private NetPlayer player;						//Skapa spalre för den som körspelet.
 	private boolean running = false;			//Kollar om spelet är igång.
-	
+	public boolean isApplet = false;			//Kollar om spelet är igång.
+	public Client client;			//Klient.
+
 	private static UIManager uiManager;			//Skapar en menyhanterare
 	private Screen screen;						//Skapar en screen som ska in i javarutan.
 	protected Font font;						//Egen klass font som laddas in.
@@ -66,6 +71,7 @@ public class Game extends Canvas implements Runnable, EventListener {
 	 * Här skapas allt som ska styras av Game-klassen
 	 */
 	public Game(){
+		game = this;
 		setSize();
 		screen = new Screen(width, height);
 		uiManager = new UIManager();
@@ -73,22 +79,20 @@ public class Game extends Canvas implements Runnable, EventListener {
 		key = new Keyboard();
 
 		// TODO: Connect to server here
-		Client client = new Client("localhost", 8192);
-		if (!client.connect()) {
-			// TODO: We didn't connect
-		}
-
-		RCDatabase db = RCDatabase.DeserializeFromFile("res/data/screen.bin");
-//		client.send(db);
+		client = new Client(this, "localhost", 8192);
+		client.connect();// TODO: We didn't connect
 
 		level = Level.spawn;
 		//level1 = Level.upper;
 		addLayer(level);
 		TileCoordinate playerSpawn = new TileCoordinate(17,42); 		//Koordinat där spelare spawnar
-		player = new Player("Winston",playerSpawn.x(),playerSpawn.y(),key);
-		
+		player = new NetPlayer(generateString(),playerSpawn.x(),playerSpawn.y(),key, null, -1);
 		level.add(player);
-		level.addPlayer(new NetPlayer());
+
+
+		LoginPacket loginPacket = new LoginPacket(player.getName(), player.x, player.y);
+		loginPacket.writeData(client);
+
 		font = new Font();
 		
 		addKeyListener(key);
@@ -96,32 +100,39 @@ public class Game extends Canvas implements Runnable, EventListener {
 		addMouseListener(mouse);
 		addMouseMotionListener(mouse);
 
-		save();
+		saveScreen();
+	}
+
+	private String generateString(){
+		Random random = new Random();
+		StringBuilder buffer = new StringBuilder(10);
+		for(int i = 0; i < 10; i++){
+			int randomLimitedInt = 97 +
+					(int)(random.nextFloat() * (122 - 97 + 1));
+			buffer.append((char) randomLimitedInt);
+		}
+
+		return buffer.toString();
 	}
 
 	private void setSize() {
-		RCDatabase db = RCDatabase.DeserializeFromFile("res/data/screen.bin");
-		if(db != null) {
-			RCObject obj = db.findObject("Resolution");
-			width = obj.findField("width").getInt();
-			height = obj.findField("height").getInt();
-			scale = obj.findField("scale").getInt();
-			panelSize = obj.findField("panelSize").getInt();
-		}
+//		RCDatabase db = RCDatabase.DeserializeFromFile("res/data/screen.bin");
+//		if(db != null) {
+//			RCObject obj = db.findObject("Resolution");
+//			width = obj.findField("width").getInt();
+//			height = obj.findField("height").getInt();
+//			scale = obj.findField("scale").getInt();
+//			panelSize = obj.findField("panelSize").getInt();
+//		}
 
 		Dimension size = new Dimension(width*scale + panelSize * scale, height*scale);
 		setPreferredSize(size);
 
 		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
-		System.out.println(
-				"width: " +  width +"\n" +
-				"height: " +  height +"\n" +
-				"scale: " +  scale
-		);
 	}
 
-	private void save() {
+	private void saveScreen() {
 		RCDatabase db = new RCDatabase("Screen");
 		RCObject obj = new RCObject("Resolution");
 		obj.addField(RCField.Integer("width", width));
