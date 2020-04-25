@@ -7,6 +7,7 @@ import st.whineHouse.rain.gx.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.gx.Sprite;
 import st.whineHouse.rain.level.Level;
+import st.whineHouse.rainserver.Server;
 
 /**
  * Entity-klass
@@ -25,6 +26,7 @@ public class Entity {
 	public int x, y;
 	private boolean removed = false;
 	protected Level level;
+	protected Server server;
 	protected final Random random = new Random();
 	protected Sprite sprite;
 	// The animation object
@@ -60,11 +62,11 @@ public class Entity {
 	}
 	
 	public int getX(){
-		return (int)x;
+		return x;
 	}
 	
 	public int getY(){
-		return (int)y;
+		return y;
 	}
 	
 	public Sprite getSprite(){
@@ -77,9 +79,11 @@ public class Entity {
 	
 	public void init(Level level){
 		this.level=level;
-		
 	}
-	
+	public void init(Level level, Server server){
+		this.level=level;
+		this.server=server;
+	}
 	
 	
 	public double getoX(){

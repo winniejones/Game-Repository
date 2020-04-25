@@ -16,7 +16,7 @@ import st.whineHouse.rain.entity.mob.npc.HirukoMob;
 import st.whineHouse.rain.entity.mob.npc.ItachiMob;
 import st.whineHouse.rain.entity.mob.npc.OrochimaruMob;
 
-public class SpawnLevel extends Level{
+public class SpawnLevel extends Level {
 	
 	public static int w;
 	public static int h;
@@ -40,15 +40,15 @@ public class SpawnLevel extends Level{
 			System.out.println("Exception! Could not load level file!");
 		}
 		
-			add(new DeidaraMob(15,60));
-			add(new HirukoMob(17,35));
+			//add(new DeidaraMob(15,60));
+			//add(new HirukoMob(17,35));
 			//add(new Shooter(10,37));
-			add(new ItachiMob(20,48));
+			//add(new ItachiMob(20,48));
 			//add(new Shooter(20,55));
-			add(new OrochimaruMob(15,53));
-			for (int i = 0; i< 5; i++){
-			//add(new Dummy(20,55));
-		}
+			//add(new OrochimaruMob(15,53));
+			//for (int i = 0; i< 5; i++){
+				//add(new Dummy(20,55));
+			//}
 		
 		
 	}

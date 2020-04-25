@@ -30,6 +30,7 @@ public class LoginPacket extends Packet {
     @Override
     public void writeData(Client client) {
         client.send(getData());
+        System.out.println("Client "+username+" has position("+x+","+y+")");
     }
 
     @Override

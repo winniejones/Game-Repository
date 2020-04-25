@@ -35,9 +35,21 @@ public class Dummy extends Mob {
 		yOff = 1;
 		xOff = 1;
 		sprite = Sprite.dummy;
+		this.id = aint.incrementAndGet();
+	}
+
+	public Dummy(int x,int y, int id){
+		this.x = x <<4;
+		this.y = y <<4;
+		this.xBound = xBound;
+		this.yBound = yBound;
+		yOff = 1;
+		xOff = 1;
+		sprite = Sprite.dummy;
+		this.id = id;
 	}
 	
-	public void update() {
+	public synchronized void update() {
 		time++;
 		if(time % (random.nextInt(50)+30) == 0){
 			xa = random.nextInt(3)-1;

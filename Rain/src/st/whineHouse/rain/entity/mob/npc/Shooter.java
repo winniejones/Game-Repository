@@ -36,14 +36,24 @@ public class Shooter extends Mob {
 	private Entity rand = null;
 	
 	public Shooter(int x, int y){
-		this.x = x<<4;
-		this.y = y<<4;
+		this.x = x;
+		this.y = y;
 		sprite = Sprite.itachi;
 		weaponID = 2;
 		health = 50;
+		this.id = aint.incrementAndGet();
+	}
+
+	public Shooter(int x, int y, int id){
+		this.x = x;
+		this.y = y;
+		sprite = Sprite.itachi;
+		weaponID = 2;
+		health = 50;
+		this.id = id;
 	}
 	
-	public void update() {
+	public synchronized void update() {
 		time++;
 		mobMoving(time);
 		shootClosest();
@@ -114,18 +124,19 @@ public class Shooter extends Mob {
  * Shoot closest
  */
 	private void shootClosest(){
-		
-		List<Mob> players = level.getPlayers(this, 100);
-		// Nedanstående kod gör att gubben skjuter på närmaste entitet.
-		players.add(level.getClientPlayer());
-		double min = 0;
 		Mob closest = null;
-		for(int i =0; i < players.size();i++){
-			Mob p = players.get(i);
-			double distance = Vector2i.getDistance(new Vector2i(x, y), new Vector2i(p.getX(),p.getY()));
-			if(i == 0 || distance < min){
-				min = distance;
-				closest = p;
+		double min = 0;
+		if(!level.getPlayers().isEmpty()){
+			List<Mob> players = level.getPlayers(this, 100);
+			// Nedanstående kod gör att gubben skjuter på närmaste entitet.
+			players.add(level.getClientPlayer());
+			for (int i = 0; i < players.size(); i++) {
+				Mob p = players.get(i);
+				double distance = Vector2i.getDistance(new Vector2i(x, y), new Vector2i(p.getX(), p.getY()));
+				if (i == 0 || distance < min) {
+					min = distance;
+					closest = p;
+				}
 			}
 		}
 		if(closest != null){

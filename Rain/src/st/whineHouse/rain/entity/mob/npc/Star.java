@@ -33,10 +33,19 @@ public class Star extends Mob {
 	private int time=0;
 	
 	public Star(int x, int y){
-		this.x = x << 4;
-		this.y = y << 4;
+		this.x = x;
+		this.y = y;
 		sprite = Sprite.hiruko;
 		health = 70;
+		this.id = aint.incrementAndGet();
+	}
+
+	public Star(int x, int y, int id){
+		this.x = x;
+		this.y = y;
+		sprite = Sprite.hiruko;
+		health = 70;
+		this.id = id;
 	}
 	
 	private void move(){
@@ -50,10 +59,10 @@ public class Star extends Mob {
 		if(path != null){
 			if(path.size()>0){
 				Vector2i vec = path.get(path.size() - 1).tile;
-				if((int)x < vec.getX() << 4) xa+=speed;
-				if((int)x > vec.getX() << 4) xa-=speed;
-				if((int)y < vec.getY() << 4) ya+=speed;
-				if((int)y > vec.getY() << 4) ya-=speed;
+				if(x < vec.getX() << 4) xa+=speed;
+				if(x > vec.getX() << 4) xa-=speed;
+				if(y < vec.getY() << 4) ya+=speed;
+				if(y > vec.getY() << 4) ya-=speed;
 			}
 		}
 		if(xa !=0 || ya !=0){
@@ -64,7 +73,7 @@ public class Star extends Mob {
 		}
 	}
 	
-	public void update() {
+	public synchronized void update() {
 		move();
 		time++;
 		mobMoving(time);

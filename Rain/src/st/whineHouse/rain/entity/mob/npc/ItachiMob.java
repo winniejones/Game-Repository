@@ -1,5 +1,6 @@
 package st.whineHouse.rain.entity.mob.npc;
 
+import st.whineHouse.rain.Game;
 import st.whineHouse.rain.entity.Entity;
 import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.projectile.WizzardArrow;
@@ -10,6 +11,7 @@ import st.whineHouse.rain.gx.Sprite;
 import st.whineHouse.rain.gx.SpriteSheet;
 import st.whineHouse.rain.utilities.RayCastingResult;
 import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.raincloud.net.packet.MovePacket;
 
 import java.util.List;
 
@@ -26,21 +28,31 @@ public class ItachiMob extends Mob {
 	private Entity rand = null;
 	
 	public ItachiMob(int x, int y){
-		this.x = x<<4;
-		this.y = y<<4;
+		this.x = x;
+		this.y = y;
 		sprite = Sprite.itachi;
 		weaponID = 2;
 		health = 500;
+		this.id = aint.incrementAndGet();
+	}
+
+	public ItachiMob(int x, int y, int id){
+		this.x = x;
+		this.y = y;
+		sprite = Sprite.itachi;
+		weaponID = 2;
+		health = 500;
+		this.id = id;
 	}
 	
-	public void update() {
+	public synchronized void update() {
 		time++;
-//		mobMoving(time);
+		mobMoving(time);
 		shootClosest();
 		//shootRandom();
 		
 		if(health<=0){
-			level.add(new ParticleSpawner((int)x, (int)y, 300, 700, level, Sprite.particle_blood));
+			level.add(new ParticleSpawner(x, y, 300, 700, level, Sprite.particle_blood));
 			remove();
 		}
 	}
@@ -74,6 +86,8 @@ public class ItachiMob extends Mob {
 		
 		if(xa !=0 || ya !=0){
 			move(xa,ya);
+			MovePacket movePacket = new MovePacket(id, x, y, 1, walking, 1,true);
+			movePacket.writeData(server);
 			walking = true;
 		}else{
 			walking = false;
@@ -105,18 +119,20 @@ public class ItachiMob extends Mob {
  * Shoot closest
  */
 	private void shootClosest(){
-		
-		List<Mob> players = level.getPlayers(this, 100);
-		// Nedanstående kod gör att gubben skjuter på närmaste entitet.
-		players.add(level.getClientPlayer());
-		double min = 0;
+
 		Mob closest = null;
-		for(int i =0; i < players.size();i++){
-			Mob p = players.get(i);
-			double distance = Vector2i.getDistance(new Vector2i(x, y), new Vector2i(p.getX(),p.getY()));
-			if(i == 0 || distance < min){
-				min = distance;
-				closest = p;
+		double min = 0;
+		if(!level.getPlayers().isEmpty()){
+			List<Mob> players = level.getPlayers(this, 100);
+			// Nedanstående kod gör att gubben skjuter på närmaste entitet.
+			players.add(level.getClientPlayer());
+			for (int i = 0; i < players.size(); i++) {
+				Mob p = players.get(i);
+				double distance = Vector2i.getDistance(new Vector2i(x, y), new Vector2i(p.getX(), p.getY()));
+				if (i == 0 || distance < min) {
+					min = distance;
+					closest = p;
+				}
 			}
 		}
 		if(closest != null){
@@ -138,7 +154,7 @@ public class ItachiMob extends Mob {
 		
 		sprite = animSprite.getSprite();
 		//Debug.drawRect(screen, 50, 50, 16, 16, false);
-		screen.renderMob((int)x-16, (int)y-16, this);
+		screen.renderMob(x-16, y-16, this);
 	}
 
 }

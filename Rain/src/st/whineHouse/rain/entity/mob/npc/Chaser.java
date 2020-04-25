@@ -1,12 +1,14 @@
 package st.whineHouse.rain.entity.mob.npc;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.gx.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.gx.Sprite;
 import st.whineHouse.rain.gx.SpriteSheet;
+import st.whineHouse.rainserver.Server;
 
 /**
  * Chaser-klassen är en Mob-klass
@@ -25,14 +27,21 @@ public class Chaser extends Mob {
 	private AnimatedSprite right = new AnimatedSprite(SpriteSheet.deidara_right, 32, 32, 3);
 	
 	private AnimatedSprite animSprite = down;
-	
 	private double xa = 0, ya = 0;
 	private double speed = 0.8;
 
 	public Chaser ( int x, int y){
-		this.x = x << 4;
-		this.y = y << 4;
+		this.x = x;
+		this.y = y;
 		sprite = Sprite.deidara;
+		this.id = aint.incrementAndGet();
+	}
+
+	public Chaser ( int x, int y, int id){
+		this.x = x;
+		this.y = y;
+		sprite = Sprite.deidara;
+		this.id = id;
 	}
 	
 	private void move(){
@@ -55,7 +64,7 @@ public class Chaser extends Mob {
 		}
 	}
 	
-	public void update() {
+	public synchronized void update() {
 		move();
 		
 		if(walking) animSprite.update();
@@ -74,13 +83,32 @@ public class Chaser extends Mob {
 			animSprite = right;
 			dir=Direction.RIGHT;
 		}
-		
-		
+	}
+
+	public void update(Server server) {
+		move();
+
+		if(walking) animSprite.update();
+		else animSprite.setFrame(0);
+		if(ya<0){
+			animSprite = up;
+			dir = Direction.UP;
+		} else if(ya>0) {
+			animSprite = down;
+			dir = Direction.DOWN;
+		}
+		if(xa<0) {
+			animSprite = left;
+			dir=Direction.LEFT;
+		} else if(xa>0){
+			animSprite = right;
+			dir=Direction.RIGHT;
+		}
 	}
 
 	public void render(Screen screen) {
 		sprite = animSprite.getSprite();
-		screen.renderMob((int)(x - 16), (int)(y - 16), this);
+		screen.renderMob((x - 16), (y - 16), this);
 
 	}
 

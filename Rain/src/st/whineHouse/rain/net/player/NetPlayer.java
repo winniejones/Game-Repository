@@ -15,6 +15,7 @@ public class NetPlayer extends Player {
         super(username,x,y,input);
         this.address = address;
         this.port = port;
+        System.out.println("is created at position.. x: " +x+" y: "+y);
     }
 
     public NetPlayer(String username, int x, int y, InetAddress address, int port) {

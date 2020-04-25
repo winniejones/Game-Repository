@@ -5,7 +5,8 @@ public enum PacketType {
     LOGIN((byte)0x01),
     DISCONNECT((byte)0x02),
     MOVE((byte)0x03),
-    PROJECTILE((byte)0x05);
+    PROJECTILE((byte)0x05),
+    MOBSPAWN((byte)0x06);
 
     private byte id;
 

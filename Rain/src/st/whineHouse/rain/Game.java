@@ -65,7 +65,7 @@ public class Game extends Canvas implements Runnable, EventListener {
 	protected Font font;						//Egen klass font som laddas in.
 	private BufferedImage image;
 	private int[] pixels;
-	private List<Layer> layerStack = new ArrayList<Layer>();
+	private List<Layer> layerStack = new ArrayList<>();
 	
 	/**
 	 * Här skapas allt som ska styras av Game-klassen

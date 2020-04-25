@@ -95,41 +95,47 @@ public class Player extends Mob implements EventListener {
         fireRate = WizardProjectile.FIRE_RATE;
 
 //sj�lva panelen, grunden
-        ui = Game.getUIManager();
-        UIPanel panel = (UIPanel) new UIPanel(
-                new Vector2i(Game.width * Game.scale, 0),
-                new Vector2i(Game.panelSize * Game.scale, Game.height * Game.scale)
-        ).setColor(0x4f4f4f); // TODO: Move this out to a personal preference file
-        ui.addPanel(panel);
+        if(Game.game != null){
+            ui = Game.getUIManager();
+            UIPanel panel = (UIPanel) new UIPanel(
+                    new Vector2i(Game.width * Game.scale, 0),
+                    new Vector2i(Game.panelSize * Game.scale, Game.height * Game.scale)
+            ).setColor(0x4f4f4f); // TODO: Move this out to a personal preference file
+            ui.addPanel(panel);
 
 // namn label på panelen
-        UILabel nameLabel = new UILabel(new Vector2i(40, 200), name);        //namn label (position och size)
-        nameLabel.setColor(0xbbbbbb);
-        nameLabel.setFont(new Font("Verdana", Font.PLAIN, 20));
-        nameLabel.dropShadow = true;
-        panel.addComponent(nameLabel);
+            UILabel nameLabel = new UILabel(new Vector2i(40, 200), name);        //namn label (position och size)
+            nameLabel.setColor(0xbbbbbb);
+            nameLabel.setFont(new Font("Verdana", Font.PLAIN, 20));
+            nameLabel.dropShadow = true;
+            panel.addComponent(nameLabel);
 
 // healthbar placering och f�rgl�ggning
-        uiHealthBar = new UIProgressBar(new Vector2i(10, 210), new Vector2i(Game.panelSize * Game.scale - 20, 15));        // helthbar (position (x,y), size (x,y))
-        uiHealthBar.setColor(0x6a6a6a);
-        uiHealthBar.setForegroundColor(0x6add6a);
-        panel.addComponent(uiHealthBar);
+            uiHealthBar = new UIProgressBar(new Vector2i(10, 210), new Vector2i(Game.panelSize * Game.scale - 20, 15));        // helthbar (position (x,y), size (x,y))
+            uiHealthBar.setColor(0x6a6a6a);
+            uiHealthBar.setForegroundColor(0x6add6a);
+            panel.addComponent(uiHealthBar);
 
 // HP textning i panelen
-        UILabel hpLabel = new UILabel(new Vector2i(uiHealthBar.position).add(new Vector2i(2, 12)), "HP");
-        hpLabel.setColor(0xffffff);
-        hpLabel.setFont(new Font("verdana", Font.PLAIN, 14));
-        panel.addComponent(hpLabel);
+            UILabel hpLabel = new UILabel(new Vector2i(uiHealthBar.position).add(new Vector2i(2, 12)), "HP");
+            hpLabel.setColor(0xffffff);
+            hpLabel.setFont(new Font("verdana", Font.PLAIN, 14));
+            panel.addComponent(hpLabel);
+
+            //create a button then overide with the function we want. (exit on pressed on that button)
+            button = new UIButton(new Vector2i(10, 260), new Vector2i(120, 40), new UIActionListener() {
+                public void perform() {
+                    System.exit(0);
+                }
+            });
+
+            button.setText("Exit");
+            panel.addComponent(button);
+        }
 
         //Player default attributes
         health = 100;
 
-        //create a button then overide with the function we want. (exit on pressed on that button)
-        button = new UIButton(new Vector2i(10, 260), new Vector2i(120, 40), new UIActionListener() {
-            public void perform() {
-                System.exit(0);
-            }
-        });
 
         //overide the button we created with the function we want. (perform action when pressed)
 //		button.setButtonListener(new UIButtonListener(){
@@ -139,8 +145,6 @@ public class Player extends Mob implements EventListener {
 //				button.ignoreNextPress();
 //			}
 //		});
-        button.setText("Exit");
-        panel.addComponent(button);
 
         /**
          * Skapar en knapp med vald bild vald genom ImageiO.
@@ -223,7 +227,7 @@ public class Player extends Mob implements EventListener {
 
         updateShooting();
         //entityCollision(x, y);
-        if (health >= 0)
+        if (health >= 0 && uiHealthBar != null)
             uiHealthBar.setProgress(health / 100.0);
     }
 

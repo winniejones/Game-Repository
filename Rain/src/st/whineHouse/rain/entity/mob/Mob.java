@@ -1,6 +1,7 @@
 package st.whineHouse.rain.entity.mob;
 
 import java.awt.Rectangle;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import st.whineHouse.rain.Game;
 import st.whineHouse.rain.entity.Entity;
@@ -8,6 +9,7 @@ import st.whineHouse.rain.entity.projectile.*;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.level.Level;
 import st.whineHouse.raincloud.net.packet.ProjectilePacket;
+import st.whineHouse.rainserver.Rainserver;
 
 /**
  * Mob-klassen som är en Entity-klass
@@ -18,7 +20,8 @@ import st.whineHouse.raincloud.net.packet.ProjectilePacket;
  */
 public abstract class Mob extends Entity{
 	
-
+	protected int id;
+	protected AtomicInteger aint = new AtomicInteger();
 	public boolean walking = false;
 	protected int numOfSteps = 0;
 	public int health;
@@ -101,7 +104,11 @@ public abstract class Mob extends Entity{
 
 		// TODO: Send to server before adding
 		ProjectilePacket projectilePacket = new ProjectilePacket(weaponID,x,y,dir);
-		projectilePacket.writeData(Game.game.client);
+		if(Game.game != null) {
+			projectilePacket.writeData(Game.game.client);
+		} else if (Rainserver.rainserver != null) {
+			projectilePacket.writeData(Rainserver.rainserver.getServer());
+		}
 		//level.add(projectile);
 	}
 	
@@ -122,7 +129,9 @@ public abstract class Mob extends Entity{
 		return solid;
 	}
 	
-	
+	public int getId() {
+		return id;
+	}
 	
 	public abstract void render(Screen screen);
 }

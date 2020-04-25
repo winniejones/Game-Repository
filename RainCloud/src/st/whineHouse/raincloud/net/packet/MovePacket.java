@@ -14,6 +14,7 @@ public class MovePacket extends Packet {
     private int speed = 0;
     private boolean walking;
     private int movingDir = 1;
+    private boolean isMob;
 
     public MovePacket(byte[] data) {
         super(MOVE);
@@ -24,6 +25,18 @@ public class MovePacket extends Packet {
         this.speed = Integer.parseInt(dataArray[3]);
         this.walking = Boolean.parseBoolean(dataArray[4]);
         this.movingDir = Integer.parseInt(dataArray[5]);
+        this.isMob = Boolean.parseBoolean(dataArray[6]);
+    }
+
+    public MovePacket(int id, int x, int y, int speed, boolean walking, int movingDir, boolean isMob) {
+        super(MOVE);
+        this.username = Integer.toString(id);
+        this.x = x;
+        this.y = y;
+        this.speed = speed;
+        this.walking = walking;
+        this.movingDir = movingDir;
+        this.isMob = isMob;
     }
 
     public MovePacket(String username, int x, int y, int speed, boolean walking) {
@@ -33,6 +46,7 @@ public class MovePacket extends Packet {
         this.y = y;
         this.speed = speed;
         this.walking = walking;
+        this.isMob = false;
     }
 
     @Override
@@ -56,13 +70,17 @@ public class MovePacket extends Packet {
             y + "," +
             speed + "," +
             walking + "," +
-            movingDir
+            movingDir + "," +
+            isMob
         ).getBytes());
         return writer.getBuffer();
     }
 
     public boolean isWalking() {
         return walking;
+    }
+    public boolean isMob() {
+        return isMob;
     }
 
     public int getMovingDir() {

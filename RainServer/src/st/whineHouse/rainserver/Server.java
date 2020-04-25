@@ -1,11 +1,11 @@
 package st.whineHouse.rainserver;
 
-import st.whineHouse.rain.entity.projectile.Projectile;
+import st.whineHouse.rain.entity.Entity;
+import st.whineHouse.rain.entity.mob.Mob;
+import st.whineHouse.rain.entity.mob.npc.*;
+import st.whineHouse.rain.level.Level;
 import st.whineHouse.rain.net.player.NetPlayer;
-import st.whineHouse.raincloud.net.packet.LoginPacket;
-import st.whineHouse.raincloud.net.packet.LogoutPacket;
-import st.whineHouse.raincloud.net.packet.MovePacket;
-import st.whineHouse.raincloud.net.packet.ProjectilePacket;
+import st.whineHouse.raincloud.net.packet.*;
 import st.whineHouse.raincloud.serialization.RCDatabase;
 import st.whineHouse.raincloud.serialization.RCField;
 import st.whineHouse.raincloud.serialization.RCObject;
@@ -16,27 +16,26 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 public class Server {
     private int port;
     private Thread listeningThread;
     private boolean listening = false;
     private DatagramSocket socket;
+    private final int MAX_PACKET_SIZE = 1024;
+    private byte[] receivedDataBuffer = new byte[MAX_PACKET_SIZE * 10];
+    Level level;
+    private List<ServerClient> clients = new ArrayList<>();
 
     public Server(int port) {
         this.port = port;
     }
 
-    private final int MAX_PACKET_SIZE = 1024;
-    private byte[] receivedDataBuffer = new byte[MAX_PACKET_SIZE * 10];
-
-    private Set<ServerClient> clients = new HashSet<>();
-    private Set<Projectile> projectiles = new HashSet<>();
-
-    public void start() {
+    public synchronized void start(Level level) {
+        this.level = level;
         try {
             socket = new DatagramSocket(port);
         } catch (SocketException e) {
@@ -53,6 +52,14 @@ public class Server {
         System.out.println("Server is listening...");
     }
 
+    public synchronized void stop() {
+        try {
+            listeningThread.join();
+        } catch (InterruptedException ie) {
+            throw new RuntimeException(ie);
+        }
+    }
+
     private void listen() {
         while (listening) {
             DatagramPacket packet = new DatagramPacket(receivedDataBuffer, MAX_PACKET_SIZE);
@@ -63,6 +70,24 @@ public class Server {
             }
             process(packet);
         }
+    }
+
+
+
+    public synchronized List<ServerClient> getPlayers(Entity e, int radius){
+        List<ServerClient> result = new ArrayList<>();
+        int ex = e.getX();
+        int ey = e.getY();
+        for(int i =0; i< clients.size(); i++){
+            ServerClient player = clients.get(i);
+            int x = player.x;
+            int y = player.y;
+            int dx = Math.abs(x - ex);
+            int dy = Math.abs(y - ey);
+            double distance = Math.sqrt((dx*dx)+(dy*dy));
+            if(distance <= radius) result.add(player);
+        }
+        return result;
     }
 
     private void process(RCDatabase database) {
@@ -86,7 +111,11 @@ public class Server {
                     break;
                 case 1: //Login
                     LoginPacket loginPacket = new LoginPacket(filteredData);
-                    System.out.println("Login..");
+                    System.out.println("Client "
+                                    + loginPacket.getUsername()
+                                    +" is trying to log in with position("
+                                    +loginPacket.getX()+","+loginPacket.getY()+")"
+                    );
                     ServerClient client = new ServerClient(loginPacket.getUsername(), loginPacket.getX(), loginPacket.getY(), address, port);
                     addConnection(client, loginPacket);
                     break;
@@ -107,7 +136,33 @@ public class Server {
                     ProjectilePacket projectilePacket = new ProjectilePacket(filteredData);
                     projectilePacket.writeData(this);
                     break;
+                case 6: // projectiles
+                    MobPacket mobPacket = new MobPacket(filteredData);
+                    mobPacket.writeData(this);
+                    break;
                 default: System.out.println("Recieved packet but cannot handle response");
+            }
+        }
+    }
+
+    private void sendMobs(InetAddress address, int port) {
+        List<Mob> mobs = level.getMobs();
+        for(int i = 0; i < mobs.size(); i++) {
+            Mob mob = mobs.get(i);
+            MobPacket mobPacket = null;
+            if(mob instanceof DeidaraMob) {
+                mobPacket = new MobPacket(1,mob.getId(),mob.x,mob.y);
+            } else if (mob instanceof HirukoMob) {
+                mobPacket = new MobPacket(2,mob.getId(),mob.x,mob.y);
+            }else if (mob instanceof ItachiMob) {
+                mobPacket = new MobPacket(3,mob.getId(),mob.x,mob.y);
+            }else if (mob instanceof OrochimaruMob) {
+                mobPacket = new MobPacket(4,mob.getId(),mob.x,mob.y);
+            }else if (mob instanceof Shooter) {
+                mobPacket = new MobPacket(5,mob.getId(),mob.x,mob.y);
+            }
+            if(mobPacket != null){
+                send(mobPacket.getData(), address, port);
             }
         }
     }
@@ -134,6 +189,9 @@ public class Server {
         }
         if(!alreadyConnected) {
             clients.add(addedClient);
+            NetPlayer player = new NetPlayer(loginPacket.getUsername(), loginPacket.getX(), loginPacket.getY(), addedClient.address, addedClient.port);
+            level.addPlayer(player);
+            sendMobs(addedClient.address, addedClient.port);
         }
     }
 
@@ -179,6 +237,7 @@ public class Server {
             player.walking = packet.isWalking();
             player.movingDir = packet.getMovingDir();
             packet.writeData(this);
+            level.movePlayer(packet.getUsername(),packet.getX(),packet.getY(),packet.getSpeed(),packet.isWalking());
         }
     }
 

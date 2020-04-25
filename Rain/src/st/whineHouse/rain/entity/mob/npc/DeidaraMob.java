@@ -8,6 +8,7 @@ import st.whineHouse.rain.gx.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.gx.Sprite;
 import st.whineHouse.rain.gx.SpriteSheet;
+import st.whineHouse.rainserver.ServerClient;
 
 /**
  * Chaser-klassen är en Mob-klass
@@ -31,33 +32,55 @@ public class DeidaraMob extends Mob {
 	private double speed = 0.8;
 
 	public DeidaraMob ( int x, int y){
-		this.x = x << 4;
-		this.y = y << 4;
+		this.x = x;
+		this.y = y;
 		sprite = Sprite.deidara;
 		health = 300;
+		this.id = aint.incrementAndGet();
+	}
+
+	public DeidaraMob ( int x, int y, int id){
+		this.x = x;
+		this.y = y;
+		sprite = Sprite.deidara;
+		health = 300;
+		this.id = id;
 	}
 	
 	private void move(){
 		xa = 0;
 		ya = 0;
-		List<Mob> players = level.getPlayers(this, 100);
-		if(players.size() > 0){
-			Mob player = players.get(0);
-		
-			if(x < player.getX()) xa += speed;
-			if(x > player.getX()) xa -= speed;
-			if(y < player.getY()) ya += speed;
-			if(y > player.getY()) ya -= speed;
+		if(level != null){
+			List<Mob> players = level.getPlayers(this, 100);
+			if (players.size() > 0) {
+				Mob player = players.get(0);
+
+				if (x < player.getX()) xa += speed;
+				if (x > player.getX()) xa -= speed;
+				if (y < player.getY()) ya += speed;
+				if (y > player.getY()) ya -= speed;
+			}
 		}
+		//else if (server != null) {
+		//	List<ServerClient> players = server.getPlayers(this, 100);
+		//	if (players.size() > 0) {
+		//		ServerClient player = players.get(0);
+//
+		//		if (x < player.x) xa += speed;
+		//		if (x > player.x) xa -= speed;
+		//		if (y < player.y) ya += speed;
+		//		if (y > player.y) ya -= speed;
+		//	}
+		//}
 		if(xa !=0 || ya !=0){
-//			move(xa,ya);
+			move(xa,ya);
 			walking = true;
 		}else{
 			walking = false;
 		}
 	}
 	
-	public void update() {
+	public synchronized void update() {
 		move();
 		
 		if(walking) animSprite.update();
@@ -78,14 +101,14 @@ public class DeidaraMob extends Mob {
 		}
 		
 		if(health<=0){
-			level.add(new ParticleSpawner((int)x, (int)y, 300, 700, level, Sprite.particle_blood));
+			level.add(new ParticleSpawner(x, y, 300, 700, level, Sprite.particle_blood));
 			remove();
 		}
 	}
 
 	public void render(Screen screen) {
 		sprite = animSprite.getSprite();
-		screen.renderMob((int)(x - 16), (int)(y - 16), this);
+		screen.renderMob((x - 16), (y - 16), this);
 
 	}
 

@@ -31,10 +31,19 @@ public class KisuneMob extends Mob {
 	private double speed = 0.8;
 
 	public KisuneMob ( int x, int y){
-		this.x = x << 4;
-		this.y = y << 4;
+		this.x = x;
+		this.y = y;
 		sprite = Sprite.kisune;
 		health = 300;
+		this.id = aint.incrementAndGet();
+	}
+
+	public KisuneMob ( int x, int y, int id){
+		this.x = x;
+		this.y = y;
+		sprite = Sprite.kisune;
+		health = 300;
+		this.id = id;
 	}
 	
 	private void move(){
@@ -57,7 +66,7 @@ public class KisuneMob extends Mob {
 		}
 	}
 	
-	public void update() {
+	public synchronized void update() {
 //		move();
 		
 		if(walking) animSprite.update();

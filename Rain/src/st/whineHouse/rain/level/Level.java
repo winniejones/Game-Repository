@@ -17,6 +17,7 @@ import st.whineHouse.rain.level.tile.Tile;
 import st.whineHouse.rain.net.player.NetPlayer;
 import st.whineHouse.rain.utilities.RayCastingResult;
 import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.rainserver.Rainserver;
 
 /**
  * Level klassen.
@@ -38,7 +39,6 @@ public class Level extends Layer{
 	private List<Projectile> projectiles = new ArrayList<>();
 	private List<Particle> particles = new ArrayList<>();
 	public static List<Mob> mobs = new ArrayList<>();
-	
 	public static List<Mob> players = new ArrayList<>();
 	
 	
@@ -68,7 +68,6 @@ public class Level extends Layer{
 		tilesInt = new int[width*height];
 		
 		generateLevel();
-		
 	}
 	
 	/**
@@ -101,12 +100,11 @@ public class Level extends Layer{
 		for( int i = 0; i < players.size(); i++){
 			players.get(i).update();
 		}
-		for( int i = 0; i < mobs.size(); i++){
-			mobs.get(i).update();
-		}
+		//for( int i = 0; i < mobs.size(); i++){
+		//	mobs.get(i).update();
+		//}
 		
 		entitySize = allEntetieSize(entities,projectiles,players);
-		removeProjectiles();
 		remove();
 	}
 
@@ -127,20 +125,18 @@ public class Level extends Layer{
 	 */
 	private void remove(){
 		for( int i = 0; i < entities.size(); i++){
-				if(entities.get(i).isRemoved()) entities.remove(i);
-			}
-			for( int i = 0; i < projectiles.size(); i++){
-				if(projectiles.get(i).isRemoved()) projectiles.remove(i);
-			}
-			for( int i = 0; i < particles.size(); i++){
-				if(particles.get(i).isRemoved()) particles.remove(i);
-			}
-			for( int i = 0; i < players.size(); i++){
-				if(players.get(i).isRemoved()) players.remove(i);
-			}
-			for( int i = 0; i < mobs.size(); i++){
-				if(mobs.get(i).isRemoved()) mobs.remove(i);
-			}
+			if(entities.get(i).isRemoved()) entities.remove(i);
+		}
+		removeProjectiles();
+		for( int i = 0; i < particles.size(); i++){
+			if(particles.get(i).isRemoved()) particles.remove(i);
+		}
+		for( int i = 0; i < players.size(); i++){
+			if(players.get(i).isRemoved()) players.remove(i);
+		}
+		for( int i = 0; i < mobs.size(); i++){
+			if(mobs.get(i).isRemoved()) mobs.remove(i);
+		}
 	}
 	
 	/**
@@ -212,10 +208,10 @@ public class Level extends Layer{
 		}
 		for( int i = 0; i < entities.size(); i++){
 			entities.get(i).render(screen);
-			}
+		}
 		for( int i = 0; i < projectiles.size(); i++){
 			projectiles.get(i).render(screen);
-			}
+		}
 		for( int i = 0; i < particles.size(); i++){
 			particles.get(i).render(screen);
 		}
@@ -225,8 +221,6 @@ public class Level extends Layer{
 		for( int i = 0; i < mobs.size(); i++){
 			mobs.get(i).render(screen);
 		}
-		
-		
 	}
 	
 	/**
@@ -250,8 +244,14 @@ public class Level extends Layer{
 	}
 
 	public synchronized void addPlayer(Mob player) {
-		player.init(this);
+		if(Rainserver.rainserver !=null)
+			player.init(this, Rainserver.rainserver.getServer());
+
 		players.add(player);
+	}
+	public synchronized void addMob(Mob mob) {
+		mob.init(this, Rainserver.rainserver.getServer());
+		mobs.add(mob);
 	}
 	
 	
@@ -504,6 +504,16 @@ public class Level extends Layer{
 				player.y = y;
 				((Player) player).speed = speed;
 				player.walking = walking;
+			}
+		});
+	}
+
+	public synchronized void moveMob(int id, int x, int y, boolean walking) {
+		mobs.forEach(mob -> {
+			if( mob.getId() == id){
+				mob.x = x;
+				mob.y = y;
+				mob.walking = walking;
 			}
 		});
 	}

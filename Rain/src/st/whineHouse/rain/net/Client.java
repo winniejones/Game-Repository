@@ -1,16 +1,15 @@
 package st.whineHouse.rain.net;
 
 import st.whineHouse.rain.Game;
+import st.whineHouse.rain.entity.mob.Mob;
+import st.whineHouse.rain.entity.mob.npc.*;
 import st.whineHouse.rain.entity.projectile.NinjaBlade;
 import st.whineHouse.rain.entity.projectile.Projectile;
 import st.whineHouse.rain.entity.projectile.WizardProjectile;
 import st.whineHouse.rain.entity.projectile.WizzardArrow;
 import st.whineHouse.rain.net.player.NetPlayer;
-import st.whineHouse.raincloud.net.packet.LoginPacket;
 import st.whineHouse.rain.utilities.BinaryWriter;
-import st.whineHouse.raincloud.net.packet.LogoutPacket;
-import st.whineHouse.raincloud.net.packet.MovePacket;
-import st.whineHouse.raincloud.net.packet.ProjectilePacket;
+import st.whineHouse.raincloud.net.packet.*;
 import st.whineHouse.raincloud.serialization.RCDatabase;
 import st.whineHouse.raincloud.serialization.RCField;
 import st.whineHouse.raincloud.serialization.RCObject;
@@ -149,6 +148,10 @@ public class Client {
                     ProjectilePacket projectilePacket = new ProjectilePacket(filteredData);
                     handleProjectiles(projectilePacket);
                     break;
+                case 6: // projectiles
+                    MobPacket mobPacket = new MobPacket(filteredData);
+                    handleMob(mobPacket);
+                    break;
             }
         } else System.out.println("Something went left from recieving data");
     }
@@ -183,6 +186,51 @@ public class Client {
         }
     }
 
+    private void handleMob(MobPacket mobPacket) {
+        Mob mob = null;
+        switch (mobPacket.getMobType()){
+            case 1:
+                mob= new DeidaraMob(
+                        mobPacket.getX(),
+                        mobPacket.getY(),
+                        mobPacket.getId()
+                        );
+                break;
+            case 2:
+                mob= new HirukoMob(
+                        mobPacket.getX(),
+                        mobPacket.getY(),
+                        mobPacket.getId()
+                );
+                break;
+            case 3:
+                mob= new ItachiMob(
+                        mobPacket.getX(),
+                        mobPacket.getY(),
+                        mobPacket.getId()
+                );
+                break;
+            case 4:
+                mob= new OrochimaruMob(
+                        mobPacket.getX(),
+                        mobPacket.getY(),
+                        mobPacket.getId()
+                );
+                break;
+            case 5:
+                mob= new Shooter(
+                        mobPacket.getX(),
+                        mobPacket.getY(),
+                        mobPacket.getId()
+                );
+                break;
+        }
+        if(mob != null) {
+            System.out.println("Addming mob");
+            Game.game.level.add(mob);
+        }
+    }
+
     private void handleLogin(LoginPacket packet, InetAddress address, int port) {
         System.out.println(
                 "[" + address.getHostAddress() + ":" + port + "] "
@@ -199,16 +247,29 @@ public class Client {
         this.game.level.addPlayer(player);
     }
     private void handleMove(MovePacket packet) {
-        System.out.println(
-                "[" + packet.getUsername() + " has now moved to " + packet.getX() +
-                       "," + packet.getY() + "] "
-        );
-        game.level.movePlayer(
-                packet.getUsername(),
-                packet.getX(),
-                packet.getY(),
-                packet.getSpeed(),
-                packet.isWalking());
+        if(packet.isMob()){
+            System.out.println(
+                    "[" + packet.getUsername() + " has now moved to " + packet.getX() +
+                            "," + packet.getY() + "] ");
+            game.level.moveMob(
+                    Integer.parseInt(packet.getUsername()),
+                    packet.getX(),
+                    packet.getY(),
+                    packet.isWalking()
+            );
+        } else {
+            System.out.println(
+                    "[" + packet.getUsername() + " has now moved to " + packet.getX() +
+                            "," + packet.getY() + "] "
+            );
+            game.level.movePlayer(
+                    packet.getUsername(),
+                    packet.getX(),
+                    packet.getY(),
+                    packet.getSpeed(),
+                    packet.isWalking()
+            );
+        }
     }
 
     private void sendConnectionPacket() {

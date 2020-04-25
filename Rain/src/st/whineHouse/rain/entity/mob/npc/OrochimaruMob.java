@@ -29,17 +29,30 @@ public class OrochimaruMob extends Mob {
 	private int xa = 0, ya = 0;
 	
 	public OrochimaruMob(int x,int y){
-		this.x = x <<4;
-		this.y = y <<4;
+		this.x = x;
+		this.y = y;
 		this.xBound = xBound;
 		this.yBound = yBound;
 		yOff = 1;
 		xOff = 1;
 		sprite = Sprite.orochimaru;
 		health = 100;
+		this.id = aint.incrementAndGet();
+	}
+
+	public OrochimaruMob(int x,int y, int id){
+		this.x = x;
+		this.y = y;
+		this.xBound = xBound;
+		this.yBound = yBound;
+		yOff = 1;
+		xOff = 1;
+		sprite = Sprite.orochimaru;
+		health = 100;
+		this.id = id;
 	}
 	
-	public void update() {
+	public synchronized void update() {
 		time++;
 //		mobMoving(time);
 		

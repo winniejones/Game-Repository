@@ -10,6 +10,7 @@ import st.whineHouse.rain.gx.Sprite;
 import st.whineHouse.rain.gx.SpriteSheet;
 import st.whineHouse.rain.level.Node;
 import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.rainserver.ServerClient;
 
 /**
  * Star-klassen är en Mob-klass
@@ -33,41 +34,80 @@ public class HirukoMob extends Mob {
 	private int time=0;
 	
 	public HirukoMob(int x, int y){
-		this.x = x << 4;
-		this.y = y << 4;
+		this.x = x;
+		this.y = y;
 		sprite = Sprite.hiruko;
 		health = 70;
+		this.id = aint.incrementAndGet();
+	}
+
+	public HirukoMob(int x, int y, int id){
+		this.x = x;
+		this.y = y;
+		sprite = Sprite.hiruko;
+		health = 70;
+		this.id = id;
 	}
 	
 	private void move(int time){
 		xa = 0;
 		ya = 0;
-		List<Mob> players = level.getPlayers(this, 70);
-		if(players.size() > 0){
-			int px = level.getClientPlayer().getX();
-			int py = level.getClientPlayer().getY();
-			Vector2i start = new Vector2i(getX() >> 4, getY() >> 4);
-			Vector2i destination = new Vector2i(px >> 4, py >> 4);
-			if(time % 3 == 0) path = level.findPath(start, destination);
-			if(path != null){
-				if(path.size()>0){
-					Vector2i vec = path.get(path.size() - 1).tile;
-					if((int)x < vec.getX() << 4) xa+=speed;
-					if((int)x > vec.getX() << 4) xa-=speed;
-					if((int)y < vec.getY() << 4) ya+=speed;
-					if((int)y > vec.getY() << 4) ya-=speed;
+		if(level != null){
+			List<Mob> players = level.getPlayers(this, 70);
+			if (players.size() > 0) {
+				int px = level.getClientPlayer().getX();
+				int py = level.getClientPlayer().getY();
+				Vector2i start = new Vector2i(getX() >> 4, getY() >> 4);
+				Vector2i destination = new Vector2i(px >> 4, py >> 4);
+				if (time % 3 == 0) path = level.findPath(start, destination);
+				if (path != null) {
+					if (path.size() > 0) {
+						Vector2i vec = path.get(path.size() - 1).tile;
+						if (x < vec.getX() << 4) xa += speed;
+						if (x > vec.getX() << 4) xa -= speed;
+						if (y < vec.getY() << 4) ya += speed;
+						if (y > vec.getY() << 4) ya -= speed;
+					}
 				}
-			}
-		} else if(players.size() == 0){
-			if(time % (random.nextInt(50)+30) == 0){
-				xa = random.nextInt(3)-1;
-				ya = random.nextInt(3)-1;
-				if(random.nextInt(3)==0){
-					xa = 0;
-					ya = 0;
+			} else if (players.size() == 0) {
+				if (time % (random.nextInt(50) + 30) == 0) {
+					xa = random.nextInt(3) - 1;
+					ya = random.nextInt(3) - 1;
+					if (random.nextInt(3) == 0) {
+						xa = 0;
+						ya = 0;
+					}
 				}
 			}
 		}
+		//else if(server != null){
+		//	List<ServerClient> players = server.getPlayers(this, 70);
+		//	if (players.size() > 0) {
+		//		int px = players.get(0).x;
+		//		int py = players.get(0).y;
+		//		Vector2i start = new Vector2i(getX() >> 4, getY() >> 4);
+		//		Vector2i destination = new Vector2i(px >> 4, py >> 4);
+		//		if (time % 3 == 0) path = level.findPath(start, destination);
+		//		if (path != null) {
+		//			if (path.size() > 0) {
+		//				Vector2i vec = path.get(path.size() - 1).tile;
+		//				if (x < vec.getX() << 4) xa += speed;
+		//				if (x > vec.getX() << 4) xa -= speed;
+		//				if (y < vec.getY() << 4) ya += speed;
+		//				if (y > vec.getY() << 4) ya -= speed;
+		//			}
+		//		}
+		//	} else if (players.size() == 0) {
+		//		if (time % (random.nextInt(50) + 30) == 0) {
+		//			xa = random.nextInt(3) - 1;
+		//			ya = random.nextInt(3) - 1;
+		//			if (random.nextInt(3) == 0) {
+		//				xa = 0;
+		//				ya = 0;
+		//			}
+		//		}
+		//	}
+		//}
 		if(xa !=0 || ya !=0){
 //			move(xa,ya);
 			walking = true;
@@ -76,7 +116,7 @@ public class HirukoMob extends Mob {
 		}
 	}
 	
-	public void update() {
+	public synchronized void update() {
 		move(time);
 		time++;
 		mobMoving(time);
