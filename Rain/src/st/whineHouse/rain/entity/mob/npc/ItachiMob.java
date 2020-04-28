@@ -11,6 +11,7 @@ import st.whineHouse.rain.gx.Sprite;
 import st.whineHouse.rain.gx.SpriteSheet;
 import st.whineHouse.rain.utilities.RayCastingResult;
 import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.raincloud.net.packet.EventPacket;
 import st.whineHouse.raincloud.net.packet.MovePacket;
 
 import java.util.List;
@@ -47,12 +48,16 @@ public class ItachiMob extends Mob {
 	
 	public synchronized void update() {
 		time++;
-		mobMoving(time);
+		if(level.isServer()){
+			mobMoving(time);
+		}
 		shootClosest();
 		//shootRandom();
 		
 		if(health<=0){
-			level.add(new ParticleSpawner(x, y, 300, 700, level, Sprite.particle_blood));
+			if(level.isClient()){
+				level.add(new ParticleSpawner(x, y, 300, 700, level, Sprite.particle_blood));
+			}
 			remove();
 		}
 	}

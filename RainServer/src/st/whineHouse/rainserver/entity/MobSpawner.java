@@ -13,7 +13,7 @@ public class MobSpawner {
     public MobSpawner() {
         mobs.add(new DeidaraMob(15*TILE_SIZE,60*TILE_SIZE, incId++));
         mobs.add(new HirukoMob(17*TILE_SIZE,35*TILE_SIZE, incId++));
-        mobs.add(new Shooter(10*TILE_SIZE,37*TILE_SIZE, incId++));
+        //mobs.add(new Shooter(10*TILE_SIZE,40*TILE_SIZE, incId++));
         mobs.add(new ItachiMob(20*TILE_SIZE,48*TILE_SIZE, incId++));
         mobs.add(new OrochimaruMob(15*TILE_SIZE,53*TILE_SIZE, incId++));
     }

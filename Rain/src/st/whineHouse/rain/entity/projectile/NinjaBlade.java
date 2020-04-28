@@ -32,7 +32,7 @@ public class NinjaBlade extends Projectile {
 	private int time = 0;
 	
 	public void update(){
-		if(level.tileCollision((int)(x + nx),(int) (y+ ny), 7 , 5, 4)){
+		if(level.isClient() && level.tileCollision((int)(x + nx),(int) (y+ ny), 7 , 5, 4)){
 			level.add(new ParticleSpawner((int)x, (int)y, life, amount, level,particle));
 			remove();
 		}
@@ -49,17 +49,31 @@ public class NinjaBlade extends Projectile {
 	
 	// Check if projectile is colliding
 	private void projectileCollision(){
-		for (int i = 0; i < level.players.size(); i++) {
-	         if (x < level.players.get(i).getX() +10
-	            && x > level.players.get(i).getX() -10// creates a 32x32 boundary, change it if your mobs are not 32x32
-	            && y <  level.players.get(i).getY() +17
-	            && y >  level.players.get(i).getY() -17) 
-	         {
-	        	level.add(new ParticleSpawner((int)x, (int)y, life, amount, level,Sprite.particle_blood));
-	            remove();
-	            Level.players.get(i).health -= 50; //only if your entities have health
-	            
-	         }
+		if(level.isClient()){
+			for (int i = 0; i < level.players.size(); i++) {
+				if (x < level.players.get(i).getX() + 10
+						&& x > level.players.get(i).getX() - 10// creates a 32x32 boundary, change it if your mobs are not 32x32
+						&& y < level.players.get(i).getY() + 17
+						&& y > level.players.get(i).getY() - 17
+				) {
+					level.add(new ParticleSpawner((int) x, (int) y, life, amount, level, Sprite.particle_blood));
+					remove();
+					level.players.get(i).health -= 50; //only if your entities have health
+				}
+			}
+		} else if(level.isServer()) {
+			for (int i = 0; i < Level.mobs.size(); i++) {
+				if (x < Level.mobs.get(i).getX() +17
+						&& x > Level.mobs.get(i).getX() -17// creates a 32x32 boundary, change it if your mobs are not 32x32
+						&& y <  Level.mobs.get(i).getY() +17
+						&& y >  Level.mobs.get(i).getY() -17
+				) {
+					remove();
+					level.add(new ParticleSpawner((int)x, (int)y, life, amount, level, Sprite.particle_blood));
+					Level.mobs.get(i).health -= 100; //only if your entities have health
+
+				}
+			}
 		}
 	}
 	

@@ -5,11 +5,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import st.whineHouse.rain.Game;
 import st.whineHouse.rain.entity.Entity;
 import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.mob.player.Player;
 import st.whineHouse.rain.entity.particle.Particle;
+import st.whineHouse.rain.entity.projectile.NinjaBlade;
 import st.whineHouse.rain.entity.projectile.Projectile;
+import st.whineHouse.rain.entity.projectile.WizardProjectile;
+import st.whineHouse.rain.entity.projectile.WizzardArrow;
 import st.whineHouse.rain.events.Event;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.gx.layers.Layer;
@@ -17,6 +21,7 @@ import st.whineHouse.rain.level.tile.Tile;
 import st.whineHouse.rain.net.player.NetPlayer;
 import st.whineHouse.rain.utilities.RayCastingResult;
 import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.raincloud.net.packet.ProjectilePacket;
 import st.whineHouse.rainserver.Rainserver;
 
 /**
@@ -31,17 +36,17 @@ public class Level extends Layer{
 	protected int[] tilesInt;
 	protected int[] tiles;
 	protected int tile_size;
-	
+
 	private int xScroll, yScroll;
-	
+
 	public static boolean USE_PIXELPERFECT_COLLISION = false;
 	private List<Entity> entities = new ArrayList<>();
 	private List<Projectile> projectiles = new ArrayList<>();
 	private List<Particle> particles = new ArrayList<>();
 	public static List<Mob> mobs = new ArrayList<>();
 	public static List<Mob> players = new ArrayList<>();
-	
-	
+
+
 	/**
 	 * nodeSorter används för A* algoritmen. Den kollar förvarje nod och lägger till i cost,
 	 *  för att senare kunna beräkna vilken väg som har minst kostnad för jägaren.
@@ -53,37 +58,37 @@ public class Level extends Layer{
 			return 0;
 		}
 	};
-	
+
 	/**
-	 * Här skapar vi en level klass som har förbestämda attributer. 
+	 * Här skapar vi en level klass som har förbestämda attributer.
 	 * Laddar in en map som sedan rendereras efter hur färgkoden på mappen ser ut.
 	 */
 	public static Level spawn = new SpawnLevel("/levels/spawnLevelMap.png");
 	//public static Level upper = new SpawnLevel("/levels/spawnLevelMap.png");
-	
+
 	public static int entitySize;
 	public Level(int width,int height){
 		this.width=width;
 		this.height = height;
 		tilesInt = new int[width*height];
-		
+
 		generateLevel();
 	}
-	
+
 	/**
 	 * Dessa är till för alla barnklasser till lvl.
 	 */
 	public Level(String path){
 		loadLevel (path);
-		generateLevel();	
+		generateLevel();
 	}
-	
+
 	protected void loadLevel(String path) {
 	}
 
 	protected void generateLevel() {
 	}
-	
+
 	/**
 	 * Updatering av listor
 	 */
@@ -100,10 +105,10 @@ public class Level extends Layer{
 		for( int i = 0; i < players.size(); i++){
 			players.get(i).update();
 		}
-		//for( int i = 0; i < mobs.size(); i++){
-		//	mobs.get(i).update();
-		//}
-		
+		for( int i = 0; i < mobs.size(); i++){
+			mobs.get(i).update();
+		}
+
 		entitySize = allEntetieSize(entities,projectiles,players);
 		remove();
 	}
@@ -119,7 +124,7 @@ public class Level extends Layer{
 	public void onEvent(Event event){
 			getClientPlayer().onEvent(event);
 		}
-	
+
 	/**
 	 * Tar bort "döda" entiteter från listor. Projectiler som har skjutits behöver tas bort m.m.
 	 */
@@ -138,25 +143,31 @@ public class Level extends Layer{
 			if(mobs.get(i).isRemoved()) mobs.remove(i);
 		}
 	}
-	
+
+	public synchronized void removeInServer() {
+		for( int i = 0; i < mobs.size(); i++){
+			if(mobs.get(i).isRemoved()) mobs.remove(i);
+		}
+	}
+
 	/**
 	 * Lista på alla entiteter
 	 */
 	private int allEntetieSize(List<Entity> e, List<Projectile> p, List<Mob> player){
 		return e.size() + p.size() + player.size();
 	}
-	
-	
+
+
 	public List<Projectile> getProjectiles(){
 		return projectiles;
 	}
-	
+
 	/**
 	 * time() kommer användas senare för att införa ändringar efter tid
 	 */
-	private void time(){	
+	private void time(){
 	}
-	
+
 	/**
 	 * Kollisions hanterare.
 	 */
@@ -174,22 +185,22 @@ public class Level extends Layer{
 		for( int i = 0; i < mobs.size(); i++){
 			mobSquares.set(i, mobs.get(i).getBounds());
 		}
-		
+
 		if(mobSquares != null){
 			for(int y = 0; y < mobs.size();y++){
-				for(int x = 1; x < mobs.size(); x++){				
+				for(int x = 1; x < mobs.size(); x++){
 					mobSquares.get(y).intersection(mobSquares.get(x));
 				}
 			}
 		}
 	}
-	
-	
+
+
 	public void setScroll(int xScroll, int yScroll){
 		this.xScroll = xScroll;
 		this.yScroll = yScroll;
 	}
-	
+
 	/**
 	 * Denna renderfunktion rendererar, efter gubbens position, allting som ska finnas på fönstret.
 	 *
@@ -200,10 +211,10 @@ public class Level extends Layer{
 		int x1 = (xScroll + screen.width+16) >> 4 ;
 		int y0 = yScroll >> 4;
 		int y1 = (yScroll + screen.height+16) >> 4 ;
-		
+
 		for(int y = y0; y < y1 ; y++){
 			for(int x = x0; x < x1; x++){
-				getTile(x,y).render(x, y, screen); //Vi har render i class Tile för att vi måste "renda" här oavsett, men vi vet bara inte vilken tile.	
+				getTile(x,y).render(x, y, screen); //Vi har render i class Tile för att vi måste "renda" här oavsett, men vi vet bara inte vilken tile.
 			}
 		}
 		for( int i = 0; i < entities.size(); i++){
@@ -222,7 +233,7 @@ public class Level extends Layer{
 			mobs.get(i).render(screen);
 		}
 	}
-	
+
 	/**
 	 * Funktion för att lägga till entiteter på leveln.
 	 */
@@ -240,7 +251,37 @@ public class Level extends Layer{
 			mobs.add((Mob) e);
 		}else{
 			entities.add(e);
-		}	
+		}
+	}
+
+	public synchronized void addProjectile(ProjectilePacket projectilePacket) {
+		Projectile projectile = null;
+		switch (projectilePacket.getProjectileType()){
+			case 1:
+				projectile = new WizzardArrow(
+						projectilePacket.getX(),
+						projectilePacket.getY(),
+						projectilePacket.getDir()
+				);
+				break;
+			case 2:
+				projectile = new NinjaBlade(
+						projectilePacket.getX(),
+						projectilePacket.getY(),
+						projectilePacket.getDir()
+				);
+				break;
+			case 3:
+				projectile = new WizardProjectile(
+						projectilePacket.getX(),
+						projectilePacket.getY(),
+						projectilePacket.getDir()
+				);
+				break;
+		}
+		if(projectile != null) {
+			projectiles.add(projectile);
+		}
 	}
 
 	public synchronized void addPlayer(Mob player) {
@@ -253,7 +294,14 @@ public class Level extends Layer{
 		mob.init(this, Rainserver.rainserver.getServer());
 		mobs.add(mob);
 	}
-	
+
+	public boolean isServer(){
+		return Rainserver.rainserver != null;
+	}
+
+	public boolean isClient(){
+		return Game.game != null;
+	}
 	
 	
 	/**
@@ -265,6 +313,9 @@ public class Level extends Layer{
 	
 	public List<Mob> getMobs(){
 		return mobs;
+	}
+	public boolean mobExists(int id){
+		return mobs.stream().anyMatch(mob -> mob.getId() == id);
 	}
 
 	public Player getClientPlayer() {

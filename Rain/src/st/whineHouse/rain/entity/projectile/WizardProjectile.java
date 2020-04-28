@@ -51,9 +51,11 @@ public class WizardProjectile extends Projectile {
 	            && y >  Level.players.get(i).getY() -17
 	            ) {
 	            remove();
-	            level.add(new ParticleSpawner((int)x, (int)y, life, amount, level, Sprite.particle_blood));
-	            Level.players.get(i).health -= 1; //only if your entities have health
-	            
+				if(level.isClient()){
+					level.add(new ParticleSpawner((int) x, (int) y, life, amount, level, Sprite.particle_blood));
+					level.players.get(i).health -= 1; //only if your entities have health
+				}
+
 	         }
 		}
 	}

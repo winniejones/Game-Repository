@@ -6,7 +6,8 @@ public enum PacketType {
     DISCONNECT((byte)0x02),
     MOVE((byte)0x03),
     PROJECTILE((byte)0x05),
-    MOBSPAWN((byte)0x06);
+    MOBSPAWN((byte)0x06),
+    EVENT((byte)0x07);
 
     private byte id;
 

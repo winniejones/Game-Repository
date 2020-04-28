@@ -37,6 +37,7 @@ import st.whineHouse.rain.input.Mouse;
 import st.whineHouse.rain.level.Level;
 import st.whineHouse.rain.utilities.ImageUtils;
 import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.raincloud.net.packet.LogoutPacket;
 import st.whineHouse.raincloud.net.packet.MovePacket;
 
 /**
@@ -125,6 +126,8 @@ public class Player extends Mob implements EventListener {
             //create a button then overide with the function we want. (exit on pressed on that button)
             button = new UIButton(new Vector2i(10, 260), new Vector2i(120, 40), new UIActionListener() {
                 public void perform() {
+                    LogoutPacket logoutPacket = new LogoutPacket(name,x,y);
+                    logoutPacket.writeData(Game.game.client);
                     System.exit(0);
                 }
             });

@@ -1,8 +1,13 @@
 package st.whineHouse.rainserver;
 
+import st.whineHouse.rain.Game;
 import st.whineHouse.rain.entity.Entity;
 import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.mob.npc.*;
+import st.whineHouse.rain.entity.projectile.NinjaBlade;
+import st.whineHouse.rain.entity.projectile.Projectile;
+import st.whineHouse.rain.entity.projectile.WizardProjectile;
+import st.whineHouse.rain.entity.projectile.WizzardArrow;
 import st.whineHouse.rain.level.Level;
 import st.whineHouse.rain.net.player.NetPlayer;
 import st.whineHouse.raincloud.net.packet.*;
@@ -113,7 +118,7 @@ public class Server {
                     LoginPacket loginPacket = new LoginPacket(filteredData);
                     System.out.println("Client "
                                     + loginPacket.getUsername()
-                                    +" is trying to log in with position("
+                                    +" has logged in with position("
                                     +loginPacket.getX()+","+loginPacket.getY()+")"
                     );
                     ServerClient client = new ServerClient(loginPacket.getUsername(), loginPacket.getX(), loginPacket.getY(), address, port);
@@ -123,7 +128,7 @@ public class Server {
                     LogoutPacket logoutPacket = new LogoutPacket(filteredData);
                     System.out.println("[" + address.getHostAddress() + ":" + port + "] "
                             + (logoutPacket).getUsername() + " has left...");
-                    this.removeConnection(logoutPacket);
+                    removeConnection(logoutPacket);
                     break;
                 case 3: // move packet
                     MovePacket movePacket = new MovePacket(filteredData);
@@ -134,6 +139,7 @@ public class Server {
                     break;
                 case 5: // projectiles
                     ProjectilePacket projectilePacket = new ProjectilePacket(filteredData);
+                    handleProjectiles(projectilePacket);
                     projectilePacket.writeData(this);
                     break;
                 case 6: // projectiles
@@ -142,6 +148,36 @@ public class Server {
                     break;
                 default: System.out.println("Recieved packet but cannot handle response");
             }
+        }
+    }
+
+    private void handleProjectiles(ProjectilePacket projectilePacket) {
+        Projectile projectile = null;
+        switch (projectilePacket.getProjectileType()){
+            case 1:
+                projectile = new WizzardArrow(
+                        projectilePacket.getX(),
+                        projectilePacket.getY(),
+                        projectilePacket.getDir()
+                );
+                break;
+            case 2:
+                projectile = new NinjaBlade(
+                        projectilePacket.getX(),
+                        projectilePacket.getY(),
+                        projectilePacket.getDir()
+                );
+                break;
+            case 3:
+                projectile = new WizardProjectile(
+                        projectilePacket.getX(),
+                        projectilePacket.getY(),
+                        projectilePacket.getDir()
+                );
+                break;
+        }
+        if(projectile != null) {
+            Rainserver.rainserver.level.add(projectile);
         }
     }
 

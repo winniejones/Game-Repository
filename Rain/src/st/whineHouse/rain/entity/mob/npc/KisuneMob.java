@@ -67,7 +67,9 @@ public class KisuneMob extends Mob {
 	}
 	
 	public synchronized void update() {
-//		move();
+		if(level.isServer()) {
+			move();
+		}
 		
 		if(walking) animSprite.update();
 		else animSprite.setFrame(0);
@@ -87,6 +89,7 @@ public class KisuneMob extends Mob {
 		}
 		
 		if(health<=0){
+			System.out.println("Kisune Died");
 			level.add(new ParticleSpawner((int)x, (int)y, 300, 700, level, Sprite.particle_blood));
 			remove();
 		}

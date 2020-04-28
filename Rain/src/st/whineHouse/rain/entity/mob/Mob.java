@@ -29,16 +29,11 @@ public abstract class Mob extends Entity{
 	protected int weaponID;
 	protected Boolean isColliding = false;
 	
-	
-	
-	
 	protected enum Direction{
 		UP,DOWN,LEFT,RIGHT
 	}
 
 	protected Direction dir;
-	
-	
 	
 	public void move(double xa, double ya){
 		if( xa != 0 && ya != 0){

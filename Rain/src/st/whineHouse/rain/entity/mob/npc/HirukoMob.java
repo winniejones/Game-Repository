@@ -119,10 +119,14 @@ public class HirukoMob extends Mob {
 	public synchronized void update() {
 		move(time);
 		time++;
-		mobMoving(time);
+		if(level.isServer()){
+			mobMoving(time);
+		}
 		
 		if(health<=0){
-			level.add(new ParticleSpawner((int)x, (int)y, 300, 700, level, Sprite.particle_blood));
+			if(level.isClient()){
+				level.add(new ParticleSpawner(x, y, 300, 700, level, Sprite.particle_blood));
+			}
 			remove();
 		}
 	}

@@ -53,8 +53,6 @@ public abstract class Projectile extends Entity {
 		return sprite.SIZE;
 	}
 	
-	protected void move(){
-		
-	}
+	protected void move(){ }
 
 }
