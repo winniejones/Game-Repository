@@ -15,6 +15,11 @@ import st.whineHouse.raincloud.serialization.RCDatabase;
 import st.whineHouse.raincloud.serialization.RCField;
 import st.whineHouse.raincloud.serialization.RCObject;
 import st.whineHouse.raincloud.serialization.Type;
+import st.whineHouse.raincloud.shared.ProjectileType;
+import st.whineHouse.rainserver.entity.ServerMob;
+import st.whineHouse.rainserver.projectiles.ServerProjectile;
+import st.whineHouse.rainserver.user.ServerPlayer;
+import st.whineHouse.rainserver.world.ServerLevel;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -32,14 +37,15 @@ public class Server {
     private DatagramSocket socket;
     private final int MAX_PACKET_SIZE = 1024;
     private byte[] receivedDataBuffer = new byte[MAX_PACKET_SIZE * 10];
-    Level level;
+    //Level level;
+    ServerLevel level;
     private List<ServerClient> clients = new ArrayList<>();
 
     public Server(int port) {
         this.port = port;
     }
 
-    public synchronized void start(Level level) {
+    public synchronized void start(ServerLevel level) {
         this.level = level;
         try {
             socket = new DatagramSocket(port);
@@ -104,7 +110,7 @@ public class Server {
         byte[] data = dataPacket.getData();
         InetAddress address = dataPacket.getAddress();
         int port = dataPacket.getPort();
-        dump(dataPacket);
+        //dump(dataPacket);
         if(new String(data, 0, 4).equals("RCDB")) {
             RCDatabase database = RCDatabase.Deserialize(data);
             process(database);
@@ -132,7 +138,7 @@ public class Server {
                     break;
                 case 3: // move packet
                     MovePacket movePacket = new MovePacket(filteredData);
-                    System.out.println("Handle move packet from " + movePacket.getUsername());
+                    //System.out.println("Handle move packet from " + movePacket.getUsername());
                     handleMove(movePacket);
                     break;
                 case 4: // error
@@ -152,54 +158,25 @@ public class Server {
     }
 
     private void handleProjectiles(ProjectilePacket projectilePacket) {
-        Projectile projectile = null;
-        switch (projectilePacket.getProjectileType()){
-            case 1:
-                projectile = new WizzardArrow(
-                        projectilePacket.getX(),
-                        projectilePacket.getY(),
-                        projectilePacket.getDir()
-                );
-                break;
-            case 2:
-                projectile = new NinjaBlade(
-                        projectilePacket.getX(),
-                        projectilePacket.getY(),
-                        projectilePacket.getDir()
-                );
-                break;
-            case 3:
-                projectile = new WizardProjectile(
-                        projectilePacket.getX(),
-                        projectilePacket.getY(),
-                        projectilePacket.getDir()
-                );
-                break;
-        }
-        if(projectile != null) {
-            Rainserver.rainserver.level.add(projectile);
+        try {
+            ServerProjectile projectile = new ServerProjectile(
+                    projectilePacket.getX(),
+                    projectilePacket.getY(),
+                    projectilePacket.getDir(),
+                    ProjectileType.getProjectileType(projectilePacket.getProjectileType())
+            );
+            Rainserver.rainserver.level.addProjectile(projectile);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     private void sendMobs(InetAddress address, int port) {
-        List<Mob> mobs = level.getMobs();
+        List<ServerMob> mobs = Rainserver.rainserver.level.getMobs();
         for(int i = 0; i < mobs.size(); i++) {
-            Mob mob = mobs.get(i);
-            MobPacket mobPacket = null;
-            if(mob instanceof DeidaraMob) {
-                mobPacket = new MobPacket(1,mob.getId(),mob.x,mob.y);
-            } else if (mob instanceof HirukoMob) {
-                mobPacket = new MobPacket(2,mob.getId(),mob.x,mob.y);
-            }else if (mob instanceof ItachiMob) {
-                mobPacket = new MobPacket(3,mob.getId(),mob.x,mob.y);
-            }else if (mob instanceof OrochimaruMob) {
-                mobPacket = new MobPacket(4,mob.getId(),mob.x,mob.y);
-            }else if (mob instanceof Shooter) {
-                mobPacket = new MobPacket(5,mob.getId(),mob.x,mob.y);
-            }
-            if(mobPacket != null){
-                send(mobPacket.getData(), address, port);
-            }
+            ServerMob mob = mobs.get(i);
+            MobPacket mobPacket = new MobPacket(mob.getType().getId(),mob.getId(),mob.x,mob.y);
+            send(mobPacket.getData(), address, port);
         }
     }
 
@@ -225,7 +202,7 @@ public class Server {
         }
         if(!alreadyConnected) {
             clients.add(addedClient);
-            NetPlayer player = new NetPlayer(loginPacket.getUsername(), loginPacket.getX(), loginPacket.getY(), addedClient.address, addedClient.port);
+            ServerPlayer player = new ServerPlayer(loginPacket.getUsername(), loginPacket.getX(), loginPacket.getY(), addedClient.address, addedClient.port);
             level.addPlayer(player);
             sendMobs(addedClient.address, addedClient.port);
         }

@@ -80,12 +80,6 @@ public class Entity {
 	public void init(Level level){
 		this.level=level;
 	}
-
-	public void init(Level level, Server server){
-		this.level=level;
-		this.server=server;
-	}
-	
 	
 	public double getoX(){
 		return x - xOff;

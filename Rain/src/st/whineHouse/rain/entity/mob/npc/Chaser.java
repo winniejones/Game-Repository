@@ -44,72 +44,53 @@ public class Chaser extends Mob {
 		this.id = id;
 	}
 	
-	private void move(){
-		xa = 0;
-		ya = 0;
-		List<Mob> players = level.getPlayers(this, 100);
-		if(players.size() > 0){
-			Mob player = players.get(0);
-		
-			if(x < player.getX()) xa += speed;
-			if(x > player.getX()) xa -= speed;
-			if(y < player.getY()) ya += speed;
-			if(y > player.getY()) ya -= speed;
-		}
-		if(xa !=0 || ya !=0){
-			move(xa,ya);
-			walking = true;
-		}else{
-			walking = false;
-		}
-	}
+	//private void move(){
+	//	xa = 0;
+	//	ya = 0;
+	//	List<Mob> players = level.getPlayers(this, 100);
+	//	if(players.size() > 0){
+	//		Mob player = players.get(0);
+	//
+	//		if(x < player.getX()) xa += speed;
+	//		if(x > player.getX()) xa -= speed;
+	//		if(y < player.getY()) ya += speed;
+	//		if(y > player.getY()) ya -= speed;
+	//	}
+	//	if(xa !=0 || ya !=0){
+	//		move(xa,ya);
+	//		walking = true;
+	//	}else{
+	//		walking = false;
+	//	}
+	//}
 	
 	public synchronized void update() {
-		move();
-		
-		if(walking) animSprite.update();
+		//if(level.isServer()) {
+		//	move();
+		//}
+
+		if (walking) animSprite.update();
 		else animSprite.setFrame(0);
-		if(ya<0){
+		if (ya < 0) {
 			animSprite = up;
 			dir = Direction.UP;
-		}else if(ya>0) {
+		} else if (ya > 0) {
 			animSprite = down;
 			dir = Direction.DOWN;
 		}
-		if(xa<0) {
+		if (xa < 0) {
 			animSprite = left;
-			dir=Direction.LEFT;
-		}else if(xa>0){
+			dir = Direction.LEFT;
+		} else if (xa > 0) {
 			animSprite = right;
-			dir=Direction.RIGHT;
+			dir = Direction.RIGHT;
 		}
-	}
 
-	public void update(Server server) {
-		move();
-
-		if(walking) animSprite.update();
-		else animSprite.setFrame(0);
-		if(ya<0){
-			animSprite = up;
-			dir = Direction.UP;
-		} else if(ya>0) {
-			animSprite = down;
-			dir = Direction.DOWN;
-		}
-		if(xa<0) {
-			animSprite = left;
-			dir=Direction.LEFT;
-		} else if(xa>0){
-			animSprite = right;
-			dir=Direction.RIGHT;
-		}
 	}
 
 	public void render(Screen screen) {
 		sprite = animSprite.getSprite();
 		screen.renderMob((x - 16), (y - 16), this);
-
 	}
 
 }

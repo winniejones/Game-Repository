@@ -6,8 +6,6 @@ import st.whineHouse.rain.gx.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.gx.Sprite;
 import st.whineHouse.rain.gx.SpriteSheet;
-import st.whineHouse.raincloud.net.packet.EventPacket;
-import st.whineHouse.rainserver.Rainserver;
 
 /**
  * Dummy-klassen som är en Mob-klass.
@@ -55,15 +53,13 @@ public class OrochimaruMob extends Mob {
 	}
 	
 	public synchronized void update() {
-		time++;
-		if(level.isServer()) {
-			mobMoving(time);
-		}
+		//if(level.isServer()) {
+		//	time++;
+		//	mobMoving(time);
+		//}
 		
 		if(health<=0 && !isRemoved()){
-			if(level.isClient()){
-				level.add(new ParticleSpawner(x, y, 300, 700, level, Sprite.particle_blood));
-			}
+			level.add(new ParticleSpawner(x, y, 300, 700, level, Sprite.particle_blood));
 			remove();
 		}
 

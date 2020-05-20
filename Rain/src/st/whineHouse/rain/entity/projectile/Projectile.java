@@ -24,6 +24,7 @@ public abstract class Projectile extends Entity {
 	protected double speed, range, damage;
 	protected final Random random = new Random();
 	protected Sprite particle;
+	protected int fireRate;
 	
 //TEST
 	/*protected enum ProjectileType{
@@ -52,7 +53,5 @@ public abstract class Projectile extends Entity {
 	public int getSpriteSize(){
 		return sprite.SIZE;
 	}
-	
-	protected void move(){ }
 
 }

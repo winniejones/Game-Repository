@@ -46,30 +46,30 @@ public class KisuneMob extends Mob {
 		this.id = id;
 	}
 	
-	private void move(){
-		xa = 0;
-		ya = 0;
-		List<Mob> players = level.getPlayers(this, 100);
-		if(players.size() > 0){
-			Mob player = players.get(0);
-		
-			if((int)x < player.getX()) xa += speed;
-			if((int)x > player.getX()) xa -= speed;
-			if((int)y < player.getY()) ya += speed;
-			if((int)y > player.getY()) ya -= speed;
-		}
-		if(xa !=0 || ya !=0){
-			move(xa,ya);
-			walking = true;
-		}else{
-			walking = false;
-		}
-	}
+	//private void move(){
+	//	xa = 0;
+	//	ya = 0;
+	//	List<Mob> players = level.getPlayers(this, 100);
+	//	if(players.size() > 0){
+	//		Mob player = players.get(0);
+	//
+	//		if((int)x < player.getX()) xa += speed;
+	//		if((int)x > player.getX()) xa -= speed;
+	//		if((int)y < player.getY()) ya += speed;
+	//		if((int)y > player.getY()) ya -= speed;
+	//	}
+	//	if(xa !=0 || ya !=0){
+	//		move(xa,ya);
+	//		walking = true;
+	//	}else{
+	//		walking = false;
+	//	}
+	//}
 	
 	public synchronized void update() {
-		if(level.isServer()) {
-			move();
-		}
+		//if(level.isServer()) {
+		//	move();
+		//}
 		
 		if(walking) animSprite.update();
 		else animSprite.setFrame(0);
@@ -98,7 +98,6 @@ public class KisuneMob extends Mob {
 	public void render(Screen screen) {
 		sprite = animSprite.getSprite();
 		screen.renderMob((int)(x - 16), (int)(y - 16), this);
-
 	}
 
 }

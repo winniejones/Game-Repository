@@ -261,10 +261,11 @@ public class Game extends Canvas implements Runnable, EventListener {
 		for (int i =0; i < pixels.length; i++){
 			pixels[i]=screen.pixels[i];
 		}
-		
+
 		Graphics g = bs.getDrawGraphics();
 		g.setColor(new Color(0xff00ff));
 		g.drawRect(0, 0, getWidth(), getHeight());
+		//g.drawString("test",player.x,player.y);
 		g.drawImage(image, 0, 0, width * scale, height * scale, null);
 		uiManager.render(g);
 		//g.fillRect(Mouse.getX()-32, Mouse.getY()-32, 64, 64);

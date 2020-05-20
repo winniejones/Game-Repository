@@ -14,9 +14,9 @@ public class LoginPacket extends Packet {
     public LoginPacket(byte[] data) {
         super(LOGIN);
         String[] dataArray = readData(data).split(",");
-        this.username = dataArray[0];
-        this.x = Integer.parseInt(dataArray[1]);
-        this.y = Integer.parseInt(dataArray[2]);
+        this.x = Integer.parseInt(dataArray[0]);
+        this.y = Integer.parseInt(dataArray[1]);
+        this.username = dataArray[2];
     }
 
     public LoginPacket(String username, int x, int y) {
@@ -43,7 +43,13 @@ public class LoginPacket extends Packet {
         BinaryWriter writer = new BinaryWriter();
         writer.write(PACKET_HEADER);
         writer.write(LOGIN.getId());
-        writer.write((this.username + "," + getX() + "," + getY()).getBytes());
+        writer.write(
+            (
+                getX() + "," +
+                getY() + "," +
+                this.username
+            ).getBytes()
+        );
         return writer.getBuffer();
     }
 

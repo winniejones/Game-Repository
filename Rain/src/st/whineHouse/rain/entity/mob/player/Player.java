@@ -68,12 +68,15 @@ public class Player extends Mob implements EventListener {
     //UI Saker
     private UIManager ui;
     private UIProgressBar uiHealthBar;
+    private UILabel hpLabel;
     private UIButton button;
+    private UILabel screenNameLabel;
 
     private BufferedImage image;
 
     private boolean shooting = false;
     public double speed;
+    private int positionOffset = Game.mobPixelSize/2;
 
     @Deprecated
     public Player(String name, Keyboard input) {
@@ -111,6 +114,12 @@ public class Player extends Mob implements EventListener {
             nameLabel.dropShadow = true;
             panel.addComponent(nameLabel);
 
+            screenNameLabel = new UILabel(new Vector2i(x - positionOffset, y - (positionOffset+4)), name);        //namn label (position och size)
+            nameLabel.setColor(0xbbbbbb);
+            nameLabel.setFont(new Font("Verdana", Font.PLAIN, 20));
+            nameLabel.dropShadow = true;
+            panel.addComponent(nameLabel);
+
 // healthbar placering och f�rgl�ggning
             uiHealthBar = new UIProgressBar(new Vector2i(10, 210), new Vector2i(Game.panelSize * Game.scale - 20, 15));        // helthbar (position (x,y), size (x,y))
             uiHealthBar.setColor(0x6a6a6a);
@@ -118,7 +127,7 @@ public class Player extends Mob implements EventListener {
             panel.addComponent(uiHealthBar);
 
 // HP textning i panelen
-            UILabel hpLabel = new UILabel(new Vector2i(uiHealthBar.position).add(new Vector2i(2, 12)), "HP");
+            hpLabel = new UILabel(new Vector2i(uiHealthBar.position).add(new Vector2i(2, 12)), "HP");
             hpLabel.setColor(0xffffff);
             hpLabel.setFont(new Font("verdana", Font.PLAIN, 14));
             panel.addComponent(hpLabel);
@@ -278,9 +287,9 @@ public class Player extends Mob implements EventListener {
     public void render(Screen screen) {
         int flip = 0;
         sprite = animSprite.getSprite();
-        int positionOffset = Game.mobPixelSize/2;
         screen.renderMob((x - positionOffset), (y - positionOffset), sprite, flip);
-//		screen.fillRect((x - 16),(y - 16),32,32,0,false);
+        screenNameLabel.setPosition(new Vector2i(x - positionOffset, y - positionOffset));
+		//screen.fillRect((x - 16),(y - 16),32,32,0,false);
     }
 
 //    public void TestRender(Screen screen) {

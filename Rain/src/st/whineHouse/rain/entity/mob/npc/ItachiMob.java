@@ -48,56 +48,54 @@ public class ItachiMob extends Mob {
 	
 	public synchronized void update() {
 		time++;
-		if(level.isServer()){
-			mobMoving(time);
-		}
+		//if(level.isServer()){
+		//	mobMoving(time);
+		//}
 		shootClosest();
 		//shootRandom();
 		
 		if(health<=0){
-			if(level.isClient()){
-				level.add(new ParticleSpawner(x, y, 300, 700, level, Sprite.particle_blood));
-			}
+			level.add(new ParticleSpawner(x, y, 300, 700, level, Sprite.particle_blood));
 			remove();
 		}
 	}
 	
-	private void mobMoving(int time){
-		if(time % (random.nextInt(50)+30) == 0){
-			xa = random.nextInt(3)-1;
-			ya = random.nextInt(3)-1;
-			if(random.nextInt(3)==0){
-				xa = 0;
-				ya = 0;
-			}
-		}
-		if(walking) animSprite.update();
-		else animSprite.setFrame(0);
-		
-		if(ya<0){
-			animSprite = up;
-			dir = Direction.UP;
-		}else if(ya>0) {
-			animSprite = down;
-			dir = Direction.DOWN;
-		}
-		if(xa<0) {
-			animSprite = left;
-			dir=Direction.LEFT;
-		}else if(xa>0){
-			animSprite = right;
-			dir=Direction.RIGHT;
-		}
-		
-		if(xa !=0 || ya !=0){
-			move(xa,ya);
-			MovePacket movePacket = new MovePacket(id, x, y, 1, walking, 1,true);
-			movePacket.writeData(server);
-			walking = true;
-		}else{
-			walking = false;
-		}
-	}
+	//private void mobMoving(int time){
+	//	if(time % (random.nextInt(50)+30) == 0){
+	//		xa = random.nextInt(3)-1;
+	//		ya = random.nextInt(3)-1;
+	//		if(random.nextInt(3)==0){
+	//			xa = 0;
+	//			ya = 0;
+	//		}
+	//	}
+	//	if(walking) animSprite.update();
+	//	else animSprite.setFrame(0);
+	//
+	//	if(ya<0){
+	//		animSprite = up;
+	//		dir = Direction.UP;
+	//	}else if(ya>0) {
+	//		animSprite = down;
+	//		dir = Direction.DOWN;
+	//	}
+	//	if(xa<0) {
+	//		animSprite = left;
+	//		dir=Direction.LEFT;
+	//	}else if(xa>0){
+	//		animSprite = right;
+	//		dir=Direction.RIGHT;
+	//	}
+	//
+	//	if(xa !=0 || ya !=0){
+	//		move(xa,ya);
+	//		MovePacket movePacket = new MovePacket(id, x, y, 1, walking, 1,true);
+	//		movePacket.writeData(server);
+	//		walking = true;
+	//	}else{
+	//		walking = false;
+	//	}
+	//}
 	
 /**
  * Shoots at random

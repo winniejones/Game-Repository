@@ -118,7 +118,7 @@ public class Client {
         byte[] data = datagramPacket.getData();
         InetAddress address = datagramPacket.getAddress();
         int port = datagramPacket.getPort();
-        dump(datagramPacket);
+        // dump(datagramPacket);
         if (data[0] == 0x40 && data[1] == 0x40) {
             byte[] filteredData = Arrays.copyOfRange(data, 3, data.length -3);
             switch (data[2]) {
@@ -138,7 +138,7 @@ public class Client {
                     break;
                 case 3: // move packet
                     MovePacket movePacket = new MovePacket(filteredData);
-                    System.out.println("Handle move packet from user " + movePacket.getUsername());
+                    //System.out.println("Handle move packet from user " + movePacket.getUsername());
                     handleMove(movePacket);
                     break;
                 case 4:
@@ -226,7 +226,6 @@ public class Client {
                 break;
         }
         if(mob != null) {
-            System.out.println("Addming mob");
             Game.game.level.add(mob);
         }
     }
@@ -248,9 +247,7 @@ public class Client {
     }
     private void handleMove(MovePacket packet) {
         if(packet.isMob()){
-            System.out.println(
-                    "[" + packet.getUsername() + " has now moved to " + packet.getX() +
-                            "," + packet.getY() + "] ");
+            //System.out.println("[" + packet.getUsername() + " has now moved to " + packet.getX() + "," + packet.getY() + "] ");
             game.level.moveMob(
                     Integer.parseInt(packet.getUsername()),
                     packet.getX(),
@@ -258,10 +255,7 @@ public class Client {
                     packet.isWalking()
             );
         } else {
-            System.out.println(
-                    "[" + packet.getUsername() + " has now moved to " + packet.getX() +
-                            "," + packet.getY() + "] "
-            );
+            //System.out.println("[" + packet.getUsername() + " has now moved to " + packet.getX() +"," + packet.getY() + "] ");
             game.level.movePlayer(
                     packet.getUsername(),
                     packet.getX(),

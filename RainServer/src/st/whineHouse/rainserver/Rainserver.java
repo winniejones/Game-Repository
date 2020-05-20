@@ -6,6 +6,8 @@ import st.whineHouse.rain.entity.projectile.Projectile;
 import st.whineHouse.rain.level.Level;
 import st.whineHouse.raincloud.net.packet.MobPacket;
 import st.whineHouse.rainserver.entity.MobSpawner;
+import st.whineHouse.rainserver.entity.ServerMob;
+import st.whineHouse.rainserver.world.ServerLevel;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -22,11 +24,12 @@ public class Rainserver implements Runnable {
     private Thread serverThread;
 
     private MobSpawner spawner;
-    public Level level;
+    public ServerLevel level;
+    //public Level level;
 
     public Rainserver() {
         spawner = new MobSpawner();
-        level = Level.spawn;
+        level = ServerLevel.spawn;
 
         int port = 8192;
         server = new Server(port);
@@ -60,32 +63,19 @@ public class Rainserver implements Runnable {
         return !stop;
     }
 
-    public synchronized void updateSpawn(List<Mob> spawnMobs){
-        List<Mob> mobs = level.getMobs();
+    public synchronized void updateSpawn(List<ServerMob> spawnMobs){
+        List<ServerMob> mobs = level.getMobs();
         /*spawnMobs.forEach(mob -> {
             if(!level.getMobs().contains(mob)) {
                 mobs.add(mob);
             }
         });*/
         for(int i = 0; i < spawnMobs.size(); i++) {
-            Mob mob = spawnMobs.get(i);
+            ServerMob mob = spawnMobs.get(i);
             if(!level.mobExists(mob.getId())){
-                MobPacket mobPacket = null;
-                if (mob instanceof DeidaraMob) {
-                    mobPacket = new MobPacket(1, mob.getId(), mob.x, mob.y);
-                } else if (mob instanceof HirukoMob) {
-                    mobPacket = new MobPacket(2, mob.getId(), mob.x, mob.y);
-                } else if (mob instanceof ItachiMob) {
-                    mobPacket = new MobPacket(3, mob.getId(), mob.x, mob.y);
-                } else if (mob instanceof OrochimaruMob) {
-                    mobPacket = new MobPacket(4, mob.getId(), mob.x, mob.y);
-                } else if (mob instanceof Shooter) {
-                    mobPacket = new MobPacket(5, mob.getId(), mob.x, mob.y);
-                }
-                if (mobPacket != null) {
-                    mobPacket.writeData(server);
-                    level.addMob(mob);
-                }
+                MobPacket mobPacket = new MobPacket(mob.getType().getId(),mob.getId(),mob.x,mob.y);
+                mobPacket.writeData(server);
+                level.addMob(mob);
             }
         }
     }
@@ -113,8 +103,8 @@ public class Rainserver implements Runnable {
                 update();
                 delta--;
             }
-            if(System.currentTimeMillis()-timer > 6000) {
-                timer += 6000;
+            if(System.currentTimeMillis()-timer > 60000) {
+                timer += 60000;
                 System.out.println("update spawn");
                 updateSpawn(spawner.getMobs());
             }

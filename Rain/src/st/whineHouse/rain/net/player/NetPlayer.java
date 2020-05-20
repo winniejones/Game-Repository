@@ -1,5 +1,6 @@
 package st.whineHouse.rain.net.player;
 
+import st.whineHouse.rain.Game;
 import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.mob.player.Player;
 import st.whineHouse.rain.gx.Screen;
@@ -29,8 +30,11 @@ public class NetPlayer extends Player {
         super.update();
     }
 
-    /*public void render(Screen screen) {
-        screen.fillRect(x, y, 32, 32, 0x2030cc, true);
-    }*/
+    public void render(Screen screen) {
+        super.render(screen);
+        int positionOffset = Game.mobPixelSize/2;
+        if(health > 0)
+            screen.drawRect(x - positionOffset,y - (positionOffset+2),(int)(0.32*health),1,0x6add6a, true);
+    }
 
 }

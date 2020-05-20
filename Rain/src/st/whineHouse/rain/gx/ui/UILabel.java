@@ -31,6 +31,10 @@ public class UILabel extends UIComponent{
 		this.font = font;
 		return this;
 	}
+
+	public void setPosition(Vector2i newPosition) {
+		this.position = newPosition;
+	}
 	
 	public void render(Graphics g){
 		if(dropShadow){

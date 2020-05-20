@@ -1,28 +1,26 @@
-package st.whineHouse.rain.level;
-import java.awt.Rectangle;
+package st.whineHouse.rainserver.world;
+
+import st.whineHouse.rain.entity.Entity;
+import st.whineHouse.rain.events.Event;
+import st.whineHouse.rain.gx.layers.Layer;
+import st.whineHouse.rain.level.Node;
+import st.whineHouse.rain.level.SpawnLevel;
+import st.whineHouse.rain.level.tile.Tile;
+import st.whineHouse.rain.utilities.RayCastingResult;
+import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.raincloud.net.packet.ProjectilePacket;
+import st.whineHouse.raincloud.shared.ProjectileType;
+import st.whineHouse.rainserver.Rainserver;
+import st.whineHouse.rainserver.entity.ServerEntity;
+import st.whineHouse.rainserver.entity.ServerMob;
+import st.whineHouse.rainserver.projectiles.ServerProjectile;
+import st.whineHouse.rainserver.user.ServerPlayer;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import st.whineHouse.rain.Game;
-import st.whineHouse.rain.entity.Entity;
-import st.whineHouse.rain.entity.mob.Mob;
-import st.whineHouse.rain.entity.mob.player.Player;
-import st.whineHouse.rain.entity.particle.Particle;
-import st.whineHouse.rain.entity.projectile.NinjaBlade;
-import st.whineHouse.rain.entity.projectile.Projectile;
-import st.whineHouse.rain.entity.projectile.WizardProjectile;
-import st.whineHouse.rain.entity.projectile.WizzardArrow;
-import st.whineHouse.rain.events.Event;
-import st.whineHouse.rain.gx.Screen;
-import st.whineHouse.rain.gx.layers.Layer;
-import st.whineHouse.rain.level.tile.Tile;
-import st.whineHouse.rain.net.player.NetPlayer;
-import st.whineHouse.rain.utilities.RayCastingResult;
-import st.whineHouse.rain.utilities.Vector2i;
-import st.whineHouse.raincloud.net.packet.ProjectilePacket;
-import st.whineHouse.rainserver.Rainserver;
 
 /**
  * Level klassen.
@@ -31,20 +29,16 @@ import st.whineHouse.rainserver.Rainserver;
  * @author Winston Jones
  *
  */
-public class Level extends Layer{
+public class ServerLevel {
 	protected int width, height;
 	protected int[] tilesInt;
 	protected int[] tiles;
 	protected int tile_size;
 
-	private int xScroll, yScroll;
 
-	public static boolean USE_PIXELPERFECT_COLLISION = false;
-	private List<Entity> entities = new ArrayList<>();
-	private List<Projectile> projectiles = new ArrayList<>();
-	private List<Particle> particles = new ArrayList<>();
-	public static List<Mob> mobs = new ArrayList<>();
-	public static List<Mob> players = new ArrayList<>();
+	private List<ServerProjectile> projectiles = new ArrayList<>();
+	public static List<ServerMob> mobs = new ArrayList<>();
+	public static List<ServerPlayer> players = new ArrayList<>();
 
 
 	/**
@@ -63,11 +57,10 @@ public class Level extends Layer{
 	 * Här skapar vi en level klass som har förbestämda attributer.
 	 * Laddar in en map som sedan rendereras efter hur färgkoden på mappen ser ut.
 	 */
-	public static Level spawn = new SpawnLevel("/levels/spawnLevelMap.png");
-	//public static Level upper = new SpawnLevel("/levels/spawnLevelMap.png");
+	public static ServerSpawnLevel spawn = new ServerSpawnLevel("/levels/spawnLevelMap.png");
+	//public static Level upper =
 
-	public static int entitySize;
-	public Level(int width,int height){
+	public ServerLevel(int width, int height){
 		this.width=width;
 		this.height = height;
 		tilesInt = new int[width*height];
@@ -78,7 +71,7 @@ public class Level extends Layer{
 	/**
 	 * Dessa är till för alla barnklasser till lvl.
 	 */
-	public Level(String path){
+	public ServerLevel(String path){
 		loadLevel (path);
 		generateLevel();
 	}
@@ -93,14 +86,8 @@ public class Level extends Layer{
 	 * Updatering av listor
 	 */
 	public void update(){
-		for( int i = 0; i < entities.size(); i++){
-			entities.get(i).update();
-		}
 		for( int i = 0; i < projectiles.size(); i++){
 			projectiles.get(i).update();
-		}
-		for( int i = 0; i < particles.size(); i++){
-			particles.get(i).update();
 		}
 		for( int i = 0; i < players.size(); i++){
 			players.get(i).update();
@@ -109,46 +96,49 @@ public class Level extends Layer{
 			mobs.get(i).update();
 		}
 
-		entitySize = allEntetieSize(entities,projectiles,players);
 		remove();
 	}
 
-	private void removeProjectiles() {
-		projectiles.removeIf(Entity::isRemoved);
-	}
-
 	public void onEvent(Event event){
-			getClientPlayer().onEvent(event);
-		}
+
+	}
 
 	/**
 	 * Tar bort "döda" entiteter från listor. Projectiler som har skjutits behöver tas bort m.m.
 	 */
 	private void remove(){
-		for( int i = 0; i < entities.size(); i++){
-			if(entities.get(i).isRemoved()) entities.remove(i);
-		}
-		removeProjectiles();
-		for( int i = 0; i < particles.size(); i++){
-			if(particles.get(i).isRemoved()) particles.remove(i);
+		for (int i = 0; i < projectiles.size(); i++) {
+			ServerProjectile p = projectiles.get(i);
+			if (p.isRemoved()){
+				projectiles.remove(i);
+			}
 		}
 		for( int i = 0; i < players.size(); i++){
-			if(players.get(i).isRemoved()) players.remove(i);
+			if(players.get(i).isRemoved()){
+				players.remove(i);
+			}
 		}
+		for( int i = 0; i < mobs.size(); i++){
+			if(mobs.get(i).isRemoved()){
+				mobs.remove(i);
+			}
+		}
+	}
+
+	public synchronized void removeInServer() {
 		for( int i = 0; i < mobs.size(); i++){
 			if(mobs.get(i).isRemoved()) mobs.remove(i);
 		}
 	}
 
-	/**
-	 * Lista på alla entiteter
-	 */
-	private int allEntetieSize(List<Entity> e, List<Projectile> p, List<Mob> player){
-		return e.size() + p.size() + player.size();
+	public List<ServerMob> getAllMobEnteties(){
+		List<ServerMob> allmobs = new ArrayList<>(mobs);
+		allmobs.addAll(players);
+		return allmobs;
 	}
 
 
-	public List<Projectile> getProjectiles(){
+	public List<ServerProjectile> getProjectiles(){
 		return projectiles;
 	}
 
@@ -170,7 +160,6 @@ public class Level extends Layer{
 		}
 		return solid;
 	}
-
 	public void collideTest(){
 		List<Rectangle> mobSquares = new ArrayList<Rectangle>();
 		for( int i = 0; i < mobs.size(); i++){
@@ -186,127 +175,76 @@ public class Level extends Layer{
 		}
 	}
 
-
-	public void setScroll(int xScroll, int yScroll){
-		this.xScroll = xScroll;
-		this.yScroll = yScroll;
-	}
-
-	/**
-	 * Denna renderfunktion rendererar, efter gubbens position, allting som ska finnas på fönstret.
-	 *
-	 */
-	public void render(Screen screen){
-		screen.setOffset(xScroll, yScroll);
-		int x0 = xScroll >> 4;  //delar var 16e pixel.
-		int x1 = (xScroll + screen.width+16) >> 4 ;
-		int y0 = yScroll >> 4;
-		int y1 = (yScroll + screen.height+16) >> 4 ;
-
-		for(int y = y0; y < y1 ; y++){
-			for(int x = x0; x < x1; x++){
-				getTile(x,y).render(x, y, screen); //Vi har render i class Tile för att vi måste "renda" här oavsett, men vi vet bara inte vilken tile.
-			}
-		}
-		for( int i = 0; i < entities.size(); i++){
-			entities.get(i).render(screen);
-		}
-		for( int i = 0; i < projectiles.size(); i++){
-			projectiles.get(i).render(screen);
-		}
-		for( int i = 0; i < particles.size(); i++){
-			particles.get(i).render(screen);
-		}
-		for( int i = 0; i < players.size(); i++){
-			players.get(i).render(screen);
-		}
-		for( int i = 0; i < mobs.size(); i++){
-			mobs.get(i).render(screen);
-		}
-	}
-
 	/**
 	 * Funktion för att lägga till entiteter på leveln.
 	 */
-	public synchronized void add(Entity e){
-		e.init(this);
-		if(e instanceof Particle){
-			particles.add((Particle)e);
-		}else if(e instanceof Projectile){
-			projectiles.add((Projectile)e);
+	public synchronized void add(ServerEntity e){
+		//e.init(this);
+		if(e instanceof ServerProjectile){
+			projectiles.add((ServerProjectile)e);
 		}
-		else if(e instanceof Player){
-			players.add((Player) e);
+		else if(e instanceof ServerPlayer){
+			players.add((ServerPlayer) e);
 		}
-		else if(e instanceof Mob){
-			mobs.add((Mob) e);
-			System.out.println("added " + ((Mob)e).getClass().getSimpleName() +" mob on: ("+ ((Mob)e).x + ", "+ ((Mob)e).y +")");
-		}else{
-			entities.add(e);
+		else if(e instanceof ServerMob){
+			mobs.add((ServerMob) e);
+			System.out.println("added " + ((ServerMob)e).getClass().getSimpleName() +" mob on: ("+ ((ServerMob)e).x + ", "+ ((ServerMob)e).y +")");
 		}
 	}
 
 	public synchronized void addProjectile(ProjectilePacket projectilePacket) {
-		Projectile projectile = null;
-		switch (projectilePacket.getProjectileType()){
-			case 1:
-				projectile = new WizzardArrow(
-						projectilePacket.getX(),
-						projectilePacket.getY(),
-						projectilePacket.getDir()
-				);
-				break;
-			case 2:
-				projectile = new NinjaBlade(
-						projectilePacket.getX(),
-						projectilePacket.getY(),
-						projectilePacket.getDir()
-				);
-				break;
-			case 3:
-				projectile = new WizardProjectile(
-						projectilePacket.getX(),
-						projectilePacket.getY(),
-						projectilePacket.getDir()
-				);
-				break;
+		ServerProjectile projectile = null;
+		try {
+			projectile = new ServerProjectile(
+					projectilePacket.getX(),
+					projectilePacket.getY(),
+					projectilePacket.getDir(),
+					ProjectileType.getProjectileType(projectilePacket.getProjectileType())
+			);
+			projectiles.add(projectile);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		if(projectile != null) {
-			projectiles.add(projectile);
+
 		}
 	}
 
-	public synchronized void addPlayer(Mob player) {
+	public synchronized void addProjectile(ServerProjectile projectile) {
+		projectiles.add(projectile);
+	}
+
+	public synchronized void addPlayer(ServerPlayer player) {
+		if(Rainserver.rainserver !=null)
+			//player.init(this, Rainserver.rainserver.getServer());
+
 		players.add(player);
 	}
-	public synchronized void addMob(Mob mob) {
+	public synchronized void addMob(ServerMob mob) {
+		//mob.init(this, Rainserver.rainserver.getServer());
 		mobs.add(mob);
 		System.out.println("added " + mob.getClass().getSimpleName() +" mob on: ("+ mob.x + ", "+ mob.y +")");
 	}
 	
+	
 	/**
 	 * Get-listor för att kunna hämta från andra klasser.
 	 */
-	public List<Mob> getPlayers(){
+	public List<ServerPlayer> getAllPlayers(){
 		return players;
 	}
 	
-	public List<Mob> getMobs(){
+	public List<ServerMob> getMobs(){
 		return mobs;
 	}
 	public boolean mobExists(int id){
 		return mobs.stream().anyMatch(mob -> mob.getId() == id);
 	}
 
-	public Player getClientPlayer() {
-		return (Player) players.get(0);
-	}
-
-/**
- * Hela den här metoden är A* algoritmen. 
- * Den tar hjälp av klassen Node och Vector2i för att beräkna vilken väg som är bäst att ta från en position till en annan.
- */
-	
+	/**
+	 * Hela den här metoden är A* algoritmen.
+	 * Den tar hjälp av klassen Node och Vector2i för att beräkna vilken väg som är bäst att ta från en position till en annan.
+	 */
 	public List<Node> findPath(Vector2i start, Vector2i goal){								
 		List<Node> openList = new ArrayList<Node>();
 		List<Node> closedList = new ArrayList<Node>();
@@ -437,52 +375,17 @@ public class Level extends Layer{
 		double distance =Math.sqrt((dx*dx) + (dy*dy));
 			return distance;// == 1 ? 1:0.95; 
 	}
-	
-	/**
-	 * Getter för att hämta lista på entiteter på leveln.
-	 */
-	public synchronized List<Entity> getEntities(){
-		List<Entity> result = new ArrayList<Entity>();
-		for(int i =0; i < entities.size(); i++){
-			Entity entity = entities.get(i);
-			result.add(entity);
-		}
-		return result;
-	}
-	
-	/**
-	 * Getter för att hämta entiteter inom en radie.
-	 * 
-	 * Ej implementerad.
-	 */
-	public synchronized List<Entity> getEntities(Entity e, int radius){
-		List<Entity> result = new ArrayList<Entity>();
-		int ex = (int)e.getX();
-		int ey = (int)e.getY();
-		for(int i =0; i < entities.size(); i++){
-			Entity entity = entities.get(i);
-			if(entity.equals(e)) continue;
-			int x = (int)entity.getX();
-			int y = (int)entity.getY();
-			int dx = Math.abs(x - ex);
-			int dy = Math.abs(y - ey);
-			double distance = Math.sqrt((dx*dx)+(dy*dy));
-			if(distance <= radius) result.add(entity);
-		}
-		return result;
-	}
-	
-	
+
 	/**
 	 * Getter för lista med mobs.
 	 * Ej implementerad.
 	 */
-	public List<Mob> getMobs(Entity e, int radius){
-		List<Mob> result = new ArrayList<Mob>();
+	public List<ServerMob> getMobs(Entity e, int radius){
+		List<ServerMob> result = new ArrayList<>();
 		int ex = (int)e.getX();
 		int ey = (int)e.getY();
 		for(int i =0; i< mobs.size(); i++){
-			Mob mob = mobs.get(i);
+			ServerMob mob = mobs.get(i);
 			int x = (int)mob.getX();
 			int y = (int)mob.getY();
 			int dx = Math.abs(x - ex);
@@ -498,12 +401,12 @@ public class Level extends Layer{
 	 * 
 	 * Ej implementerad.
 	 */
-	public synchronized List<Mob> getPlayers(Entity e, int radius){
-		List<Mob> result = new ArrayList<>();
+	public synchronized List<ServerMob> getPlayers(Entity e, int radius){
+		List<ServerMob> result = new ArrayList<>();
 		int ex = e.getX();
 		int ey = e.getY();
 		for(int i =0; i< players.size(); i++){
-			Mob player = players.get(i);
+			ServerMob player = players.get(i);
 			int x = player.getX();
 			int y = player.getY();
 			int dx = Math.abs(x - ex);
@@ -530,10 +433,10 @@ public class Level extends Layer{
 
 	public synchronized void movePlayer(String username, int x, int y, int speed, boolean walking) {
 		players.forEach(player -> {
-			if(((NetPlayer) player).getName().equalsIgnoreCase(username)){
+			if(player.username.equalsIgnoreCase(username)){
 				player.x = x;
 				player.y = y;
-				((Player) player).speed = speed;
+				((ServerPlayer) player).speed = speed;
 				player.walking = walking;
 			}
 		});
@@ -550,7 +453,7 @@ public class Level extends Layer{
 	}
 
 	public synchronized void removePlayer(String username) {
-		players.removeIf(player -> ((NetPlayer) player).getName().equalsIgnoreCase(username));
+		players.removeIf(player -> player.username.equalsIgnoreCase(username));
 	}
 
 }

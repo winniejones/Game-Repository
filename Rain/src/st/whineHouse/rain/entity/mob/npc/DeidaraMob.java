@@ -47,43 +47,43 @@ public class DeidaraMob extends Mob {
 		this.id = id;
 	}
 	
-	private void move(){
-		xa = 0;
-		ya = 0;
-		if(level != null){
-			List<Mob> players = level.getPlayers(this, 100);
-			if (players.size() > 0) {
-				Mob player = players.get(0);
-
-				if (x < player.getX()) xa += speed;
-				if (x > player.getX()) xa -= speed;
-				if (y < player.getY()) ya += speed;
-				if (y > player.getY()) ya -= speed;
-			}
-		}
-		//else if (server != null) {
-		//	List<ServerClient> players = server.getPlayers(this, 100);
-		//	if (players.size() > 0) {
-		//		ServerClient player = players.get(0);
+	//private void move(){
+	//	xa = 0;
+	//	ya = 0;
+	//	if(level != null){
+	//		List<Mob> players = level.getPlayers(this, 100);
+	//		if (players.size() > 0) {
+	//			Mob player = players.get(0);
 //
-		//		if (x < player.x) xa += speed;
-		//		if (x > player.x) xa -= speed;
-		//		if (y < player.y) ya += speed;
-		//		if (y > player.y) ya -= speed;
-		//	}
-		//}
-		if(xa !=0 || ya !=0){
-			move(xa,ya);
-			walking = true;
-		}else{
-			walking = false;
-		}
-	}
+	//			if (x < player.getX()) xa += speed;
+	//			if (x > player.getX()) xa -= speed;
+	//			if (y < player.getY()) ya += speed;
+	//			if (y > player.getY()) ya -= speed;
+	//		}
+	//	}
+	//	//else if (server != null) {
+	//	//	List<ServerClient> players = server.getPlayers(this, 100);
+	//	//	if (players.size() > 0) {
+	//	//		ServerClient player = players.get(0);
+////
+	//	//		if (x < player.x) xa += speed;
+	//	//		if (x > player.x) xa -= speed;
+	//	//		if (y < player.y) ya += speed;
+	//	//		if (y > player.y) ya -= speed;
+	//	//	}
+	//	//}
+	//	if(xa !=0 || ya !=0){
+	//		move(xa,ya);
+	//		walking = true;
+	//	}else{
+	//		walking = false;
+	//	}
+	//}
 	
 	public synchronized void update() {
-		if(level.isServer()){
-			move();
-		}
+		//if(level.isServer()){
+		//	move();
+		//}
 		
 		if(walking) animSprite.update();
 		else animSprite.setFrame(0);
@@ -103,9 +103,7 @@ public class DeidaraMob extends Mob {
 		}
 		
 		if(health<=0){
-			if(level.isClient()){
-				level.add(new ParticleSpawner(x, y, 300, 700, level, Sprite.particle_blood));
-			}
+			level.add(new ParticleSpawner(x, y, 300, 700, level, Sprite.particle_blood));
 			remove();
 		}
 	}
