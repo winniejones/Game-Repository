@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/MyGame.iml" filepath="$PROJECT_DIR$/.idea/MyGame.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Rain/Rain.iml" filepath="$PROJECT_DIR$/Rain/Rain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RainCloud/RainCloud.iml" filepath="$PROJECT_DIR$/RainCloud/RainCloud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RainServer/RainServer.iml" filepath="$PROJECT_DIR$/RainServer/RainServer.iml" />
     </modules>
   </component>
 </project>
