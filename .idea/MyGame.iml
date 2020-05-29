@@ -7,6 +7,10 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/RainCloud/src/st" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RainServer/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Rain/src/main/java" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/Rain/target" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
