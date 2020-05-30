@@ -1,7 +1,6 @@
-package whineHouse.rain.net.player;
+package st.whineHouse.rain.net.player;
 
 import st.whineHouse.rain.Game;
-import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.mob.player.Player;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.input.Keyboard;

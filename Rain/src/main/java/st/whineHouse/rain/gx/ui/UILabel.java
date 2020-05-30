@@ -1,10 +1,10 @@
-package whineHouse.rain.gx.ui;
+package st.whineHouse.rain.gx.ui;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
-import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.raincloud.utility.Vector2i;
 
 /**
  * UI-label-klassen är en UIcomponent-klass

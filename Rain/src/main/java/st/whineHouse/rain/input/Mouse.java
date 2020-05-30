@@ -1,4 +1,4 @@
-package whineHouse.rain.input;
+package st.whineHouse.rain.input;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

@@ -1,10 +1,8 @@
-package whineHouse.rain.entity.projectile;
+package st.whineHouse.rain.entity.projectile;
 
-import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.spawner.ParticleSpawner;
 import st.whineHouse.rain.gx.Screen;
-import st.whineHouse.rain.gx.Sprite;
-import st.whineHouse.rain.level.Level;
+import st.whineHouse.raincloud.graphics.Sprite;
 
 /**
  * Wizzardarrow-klass är en projectile-klass

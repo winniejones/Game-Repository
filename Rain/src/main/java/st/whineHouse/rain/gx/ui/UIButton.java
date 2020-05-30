@@ -1,4 +1,4 @@
-package whineHouse.rain.gx.ui;
+package st.whineHouse.rain.gx.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 import st.whineHouse.rain.input.Mouse;
-import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.raincloud.utility.Vector2i;
 
 /**
  * UIbutton-klassen är en UIComponent-klass.

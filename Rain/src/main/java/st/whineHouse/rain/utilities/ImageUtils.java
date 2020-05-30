@@ -1,10 +1,10 @@
-package whineHouse.rain.utilities;
+package st.whineHouse.rain.utilities;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferByte;
 
-import static st.whineHouse.rain.utilities.MathUtils.*;
+import static st.whineHouse.raincloud.utility.MathUtils.*;
 
 public class ImageUtils {
 	

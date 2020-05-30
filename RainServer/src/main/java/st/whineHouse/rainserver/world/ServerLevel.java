@@ -1,15 +1,11 @@
-package whineHouse.rainserver.world;
+package st.whineHouse.rainserver.world;
 
-import st.whineHouse.rain.entity.Entity;
-import st.whineHouse.rain.events.Event;
-import st.whineHouse.rain.gx.layers.Layer;
-import st.whineHouse.rain.level.Node;
-import st.whineHouse.rain.level.SpawnLevel;
-import st.whineHouse.rain.level.tile.Tile;
-import st.whineHouse.rain.utilities.RayCastingResult;
-import st.whineHouse.rain.utilities.Vector2i;
 import st.whineHouse.raincloud.net.packet.ProjectilePacket;
 import st.whineHouse.raincloud.shared.ProjectileType;
+import st.whineHouse.raincloud.tile.Tile;
+import st.whineHouse.raincloud.utility.Node;
+import st.whineHouse.raincloud.utility.RayCastingResult;
+import st.whineHouse.raincloud.utility.Vector2i;
 import st.whineHouse.rainserver.Rainserver;
 import st.whineHouse.rainserver.entity.ServerEntity;
 import st.whineHouse.rainserver.entity.ServerMob;
@@ -245,7 +241,7 @@ public class ServerLevel {
 	 * Hela den här metoden är A* algoritmen.
 	 * Den tar hjälp av klassen Node och Vector2i för att beräkna vilken väg som är bäst att ta från en position till en annan.
 	 */
-	public List<Node> findPath(Vector2i start, Vector2i goal){								
+	public List<Node> findPath(Vector2i start, Vector2i goal){
 		List<Node> openList = new ArrayList<Node>();
 		List<Node> closedList = new ArrayList<Node>();
 		Node current = new Node(start, null, 0, getDistance(start,goal));
@@ -380,7 +376,7 @@ public class ServerLevel {
 	 * Getter för lista med mobs.
 	 * Ej implementerad.
 	 */
-	public List<ServerMob> getMobs(Entity e, int radius){
+	public List<ServerMob> getMobs(ServerEntity e, int radius){
 		List<ServerMob> result = new ArrayList<>();
 		int ex = (int)e.getX();
 		int ey = (int)e.getY();
@@ -401,7 +397,7 @@ public class ServerLevel {
 	 * 
 	 * Ej implementerad.
 	 */
-	public synchronized List<ServerMob> getPlayers(Entity e, int radius){
+	public synchronized List<ServerMob> getPlayers(ServerEntity e, int radius){
 		List<ServerMob> result = new ArrayList<>();
 		int ex = e.getX();
 		int ey = e.getY();

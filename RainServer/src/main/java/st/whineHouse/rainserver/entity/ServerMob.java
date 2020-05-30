@@ -1,13 +1,10 @@
-package whineHouse.rainserver.entity;
+package st.whineHouse.rainserver.entity;
 
-import st.whineHouse.rain.Game;
-import st.whineHouse.rain.entity.projectile.NinjaBlade;
-import st.whineHouse.rain.entity.projectile.Projectile;
-import st.whineHouse.rain.entity.projectile.WizardProjectile;
-import st.whineHouse.rain.entity.projectile.WizzardArrow;
 import st.whineHouse.raincloud.net.packet.ProjectilePacket;
 import st.whineHouse.raincloud.shared.MobType;
+import st.whineHouse.raincloud.shared.ProjectileType;
 import st.whineHouse.rainserver.Rainserver;
+import st.whineHouse.rainserver.projectiles.ServerProjectile;
 
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,7 +23,7 @@ public class ServerMob extends ServerEntity{
 	public boolean walking = false;
 	private int numOfSteps = 0;
 	public int health;
-	private Projectile projectile;
+	private ServerProjectile projectile;
 	private int weaponID;
 	protected Boolean isColliding = false;
 	private MobType type;
@@ -97,13 +94,11 @@ public class ServerMob extends ServerEntity{
 		super.update();
 	}
 	
-	protected void shoot(double x, double y , double dir,int weaponID){
+	protected void shoot(double x, double y , double dir,int weaponID) throws Exception {
 		
 		//this.projectile = projectile;
 		//Projectile p = new WizzardArrow(x, y, dir);
-		if(weaponID == 1) projectile = new WizzardArrow(x, y, dir);
-		if(weaponID == 2) projectile = new NinjaBlade(x, y, dir);
-		if(weaponID == 3) projectile = new WizardProjectile(x, y, dir);
+		projectile = new ServerProjectile(x,y,dir, ProjectileType.getProjectileType(weaponID));
 		/*
 		 * if(weaponID == 1) projectile = new WizzardArrow(x, y, dir);
 		 * if(weaponID == 2) projectile = new NinjaBlade(x, y, dir);
@@ -113,11 +108,7 @@ public class ServerMob extends ServerEntity{
 
 		// TODO: Send to server before adding
 		ProjectilePacket projectilePacket = new ProjectilePacket(weaponID,x,y,dir);
-		if(Game.game != null) {
-			projectilePacket.writeData(Game.game.client);
-		} else if (Rainserver.rainserver != null) {
-			projectilePacket.writeData(Rainserver.rainserver.getServer());
-		}
+		projectilePacket.writeData(Rainserver.rainserver.getServer());
 		//level.add(projectile);
 	}
 	

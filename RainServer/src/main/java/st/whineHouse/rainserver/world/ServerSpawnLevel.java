@@ -1,4 +1,4 @@
-package whineHouse.rainserver.world;
+package st.whineHouse.rainserver.world;
 
 /**
  * Spawn level klassen

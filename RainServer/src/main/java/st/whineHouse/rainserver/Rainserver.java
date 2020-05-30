@@ -1,19 +1,12 @@
-package whineHouse.rainserver;
+package st.whineHouse.rainserver;
 
-import st.whineHouse.rain.entity.mob.Mob;
-import st.whineHouse.rain.entity.mob.npc.*;
-import st.whineHouse.rain.entity.projectile.Projectile;
-import st.whineHouse.rain.level.Level;
 import st.whineHouse.raincloud.net.packet.MobPacket;
 import st.whineHouse.rainserver.entity.MobSpawner;
 import st.whineHouse.rainserver.entity.ServerMob;
 import st.whineHouse.rainserver.world.ServerLevel;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Rainserver implements Runnable {
@@ -74,7 +67,7 @@ public class Rainserver implements Runnable {
             ServerMob mob = spawnMobs.get(i);
             if(!level.mobExists(mob.getId())){
                 MobPacket mobPacket = new MobPacket(mob.getType().getId(),mob.getId(),mob.x,mob.y);
-                mobPacket.writeData(server);
+                mobPacket.broadcastData(server);
                 level.addMob(mob);
             }
         }

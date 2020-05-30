@@ -1,8 +1,5 @@
-package whineHouse.rainserver.projectiles;
+package st.whineHouse.rainserver.projectiles;
 
-import st.whineHouse.rain.entity.Entity;
-import st.whineHouse.rain.entity.spawner.ParticleSpawner;
-import st.whineHouse.rain.gx.Sprite;
 import st.whineHouse.raincloud.shared.ProjectileType;
 import st.whineHouse.rainserver.entity.ServerEntity;
 

@@ -1,4 +1,4 @@
-package whineHouse.rainserver;
+package st.whineHouse.rainserver;
 
 import java.net.InetAddress;
 

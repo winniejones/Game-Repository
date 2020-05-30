@@ -1,19 +1,5 @@
-package whineHouse.rain;
+package st.whineHouse.rain;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import javax.swing.JFrame;
-
-import st.whineHouse.rain.entity.mob.player.Player;
 import st.whineHouse.rain.events.Event;
 import st.whineHouse.rain.events.EventListener;
 import st.whineHouse.rain.gx.Font;
@@ -30,6 +16,15 @@ import st.whineHouse.raincloud.net.packet.LoginPacket;
 import st.whineHouse.raincloud.serialization.RCDatabase;
 import st.whineHouse.raincloud.serialization.RCField;
 import st.whineHouse.raincloud.serialization.RCObject;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 //import st.whineHouse.rain.level.collisionHandling.Quadtree;
 
 	/**
@@ -116,7 +111,7 @@ public class Game extends Canvas implements Runnable, EventListener {
 	}
 
 	private void setSize() {
-//		RCDatabase db = RCDatabase.DeserializeFromFile("res/data/screen.bin");
+//		RCDatabase db = RCDatabase.DeserializeFromFile("screen.bin");
 //		if(db != null) {
 //			RCObject obj = db.findObject("Resolution");
 //			width = obj.findField("width").getInt();
@@ -141,7 +136,7 @@ public class Game extends Canvas implements Runnable, EventListener {
 		obj.addField(RCField.Integer("panelSize", panelSize));
 		db.addObject(obj);
 
-		db.serializeToFile("res/data/screen.bin");
+		db.serializeToFile("screen.bin");
 	}
 
 	private void load() {

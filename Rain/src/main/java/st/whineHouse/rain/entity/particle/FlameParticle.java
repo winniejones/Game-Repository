@@ -1,7 +1,7 @@
-package whineHouse.rain.entity.particle;
+package st.whineHouse.rain.entity.particle;
 
 import st.whineHouse.rain.gx.Screen;
-import st.whineHouse.rain.gx.Sprite;
+import st.whineHouse.raincloud.graphics.Sprite;
 
 public class FlameParticle extends Particle{
 

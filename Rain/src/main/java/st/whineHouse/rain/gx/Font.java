@@ -1,4 +1,7 @@
-package whineHouse.rain.gx;
+package st.whineHouse.rain.gx;
+
+import st.whineHouse.raincloud.graphics.Sprite;
+import st.whineHouse.raincloud.graphics.SpriteSheet;
 
 /**
  * Font-klass

@@ -1,4 +1,4 @@
-package whineHouse.rain.level;
+package st.whineHouse.rain.level;
 import java.util.Random;
 
 /**

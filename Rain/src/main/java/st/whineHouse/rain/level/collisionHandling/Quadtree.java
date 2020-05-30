@@ -1,4 +1,4 @@
-package whineHouse.rain.level.collisionHandling;
+package st.whineHouse.rain.level.collisionHandling;
 
 import java.awt.Rectangle;
 import java.util.*;

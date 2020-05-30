@@ -1,4 +1,4 @@
-package whineHouse.rain.entity.spawner;
+package st.whineHouse.rain.entity.spawner;
 
 import st.whineHouse.rain.entity.mob.npc.KisuneMob;
 import st.whineHouse.rain.entity.mob.Mob; 

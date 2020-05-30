@@ -1,4 +1,4 @@
-package whineHouse.rain.level;
+package st.whineHouse.rain.level;
 
 /**
  * TileCoordinate används för att kunna hålla koll på varje ruta och sin position på kartan.

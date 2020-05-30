@@ -1,6 +1,4 @@
-package whineHouse.rain.gx.layers;
-
-import java.awt.Graphics;
+package st.whineHouse.rain.gx.layers;
 
 import st.whineHouse.rain.events.Event;
 import st.whineHouse.rain.events.EventListener;

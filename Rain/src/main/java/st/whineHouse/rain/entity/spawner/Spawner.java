@@ -1,4 +1,4 @@
-package whineHouse.rain.entity.spawner;
+package st.whineHouse.rain.entity.spawner;
 
 import st.whineHouse.rain.entity.Entity;
 import st.whineHouse.rain.level.Level;

@@ -1,8 +1,8 @@
-package whineHouse.rain.entity.spawner;
+package st.whineHouse.rain.entity.spawner;
 
 import st.whineHouse.rain.entity.particle.FlameParticle;
 import st.whineHouse.rain.entity.particle.Particle;
-import st.whineHouse.rain.gx.Sprite;
+import st.whineHouse.raincloud.graphics.Sprite;
 import st.whineHouse.rain.level.Level;
 
 /**

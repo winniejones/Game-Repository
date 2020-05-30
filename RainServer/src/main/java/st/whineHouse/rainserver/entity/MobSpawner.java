@@ -1,4 +1,4 @@
-package whineHouse.rainserver.entity;
+package st.whineHouse.rainserver.entity;
 
 import java.util.ArrayList;
 import java.util.List;

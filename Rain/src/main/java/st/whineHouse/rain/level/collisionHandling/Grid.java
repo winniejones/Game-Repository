@@ -1,4 +1,4 @@
-package whineHouse.rain.level.collisionHandling;
+package st.whineHouse.rain.level.collisionHandling;
 
 import java.util.ArrayList;
 import java.util.List;

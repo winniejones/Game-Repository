@@ -1,4 +1,4 @@
-package whineHouse.rain.level;
+package st.whineHouse.rain.level;
 
 /**
  * Spawn level klassen

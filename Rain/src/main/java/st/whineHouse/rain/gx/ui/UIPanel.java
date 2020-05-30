@@ -1,11 +1,11 @@
-package whineHouse.rain.gx.ui;
+package st.whineHouse.rain.gx.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 
-import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.raincloud.utility.Vector2i;
 
 /**
  * UIPanel-klass är en UIcomponent-klass

@@ -1,4 +1,4 @@
-package whineHouse.rain.events;
+package st.whineHouse.rain.events;
 
 public interface EventListener {
 

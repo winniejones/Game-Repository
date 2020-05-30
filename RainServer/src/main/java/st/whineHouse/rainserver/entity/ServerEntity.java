@@ -1,9 +1,5 @@
-package whineHouse.rainserver.entity;
+package st.whineHouse.rainserver.entity;
 
-import st.whineHouse.rain.gx.AnimatedSprite;
-import st.whineHouse.rain.gx.Screen;
-import st.whineHouse.rain.gx.Sprite;
-import st.whineHouse.rain.level.Level;
 import st.whineHouse.rainserver.Server;
 import st.whineHouse.rainserver.world.ServerLevel;
 

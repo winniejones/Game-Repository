@@ -1,8 +1,8 @@
-package whineHouse.rain.entity.particle;
+package st.whineHouse.rain.entity.particle;
 
 import st.whineHouse.rain.entity.Entity;
 import st.whineHouse.rain.gx.Screen;
-import st.whineHouse.rain.gx.Sprite;
+import st.whineHouse.raincloud.graphics.Sprite;
 
 /**
  * Praticle-klass är en entitet-klass

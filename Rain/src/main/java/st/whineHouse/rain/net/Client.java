@@ -1,4 +1,4 @@
-package whineHouse.rain.net;
+package st.whineHouse.rain.net;
 
 import st.whineHouse.rain.Game;
 import st.whineHouse.rain.entity.mob.Mob;
@@ -8,18 +8,19 @@ import st.whineHouse.rain.entity.projectile.Projectile;
 import st.whineHouse.rain.entity.projectile.WizardProjectile;
 import st.whineHouse.rain.entity.projectile.WizzardArrow;
 import st.whineHouse.rain.net.player.NetPlayer;
-import st.whineHouse.rain.utilities.BinaryWriter;
+import st.whineHouse.raincloud.utility.BinaryWriter;
 import st.whineHouse.raincloud.net.packet.*;
 import st.whineHouse.raincloud.serialization.RCDatabase;
 import st.whineHouse.raincloud.serialization.RCField;
 import st.whineHouse.raincloud.serialization.RCObject;
 import st.whineHouse.raincloud.serialization.Type;
+import st.whineHouse.raincloud.net.host.Host;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.Arrays;
 
-public class Client {
+public class Client extends Host {
     private final static byte[] PACKET_HEADER = new byte[] { 0x40, 0x40 };
     private final static byte PACKET_TYPE_CONNECT = 0x00;
     private final static byte PACKET_TYPE_LOGIN = 0x01;
@@ -273,6 +274,7 @@ public class Client {
         send(writer.getBuffer());
     }
 
+    @Override
     public void send(byte[] data) {
         assert(socket.isConnected());
         DatagramPacket packet = new DatagramPacket(data, data.length, serverAddress, port);
@@ -281,6 +283,11 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void broadcastToClients(byte[] data) throws Exception {
+        throw new Exception("Not implemented in client");
     }
 
     public void send(RCDatabase database) {

@@ -1,4 +1,4 @@
-package whineHouse.rain.gx;
+package st.whineHouse.rain.gx;
 
 import java.util.List;
 import java.util.Random;
@@ -8,8 +8,11 @@ import st.whineHouse.rain.entity.mob.npc.Chaser;
 import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.mob.npc.Star;
 import st.whineHouse.rain.entity.projectile.Projectile;
-import st.whineHouse.rain.level.tile.Tile;
-import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.raincloud.graphics.DomainScreen;
+import st.whineHouse.raincloud.graphics.Sprite;
+import st.whineHouse.raincloud.graphics.SpriteSheet;
+import st.whineHouse.raincloud.tile.Tile;
+import st.whineHouse.raincloud.utility.Vector2i;
 
 /**
  * Screen-klassen
@@ -18,14 +21,7 @@ import st.whineHouse.rain.utilities.Vector2i;
  * 
  * @author Winston Jones
  */
-public class Screen {
-	
-	public int width, height;
-	public int[] pixels;
-	public final int MAP_SIZE = 16;
-	public final int MAP_SIZE_MASK = MAP_SIZE-1;
-	private final int ALPHA_COL = 0xffff00ff;
-	public int xOffset, yOffset;
+public class Screen extends DomainScreen {
 	
 	public int[] tiles = new int [MAP_SIZE * MAP_SIZE];
 	
@@ -93,20 +89,7 @@ public class Screen {
 			}
 		}
 	}
-	
-	public void renderTile(int xp, int yp, Tile tile){
-		xp -= xOffset;
-		yp -= yOffset;
-		for(int y =0; y< tile.sprite.SIZE; y++){
-			int ya = y + yp;
-			for(int x =0; x < tile.sprite.SIZE; x++){
-				int xa = x + xp;
-				if(xa < - tile.sprite.SIZE || xa >= width || ya < 0 || ya >= height) break;
-				if (xa < 0) xa = 0;
-				pixels[xa + ya*width]= tile.sprite.pixels[x + y * tile.sprite.SIZE];
-			}
-		}
-	}
+
 	public void renderProjectile(int xp, int yp, Projectile p){
 		xp -= xOffset;
 		yp -= yOffset;

@@ -1,42 +1,31 @@
-package whineHouse.rain.entity.mob.player;
+package st.whineHouse.rain.entity.mob.player;
 
 import java.awt.Font;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import st.whineHouse.rain.Game;
 import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.projectile.Projectile;
 import st.whineHouse.rain.entity.projectile.WizardProjectile;
-import st.whineHouse.rain.entity.projectile.WizzardArrow;
-import st.whineHouse.rain.entity.spawner.ParticleSpawner;
 import st.whineHouse.rain.events.Event;
 import st.whineHouse.rain.events.EventDispatcher;
 import st.whineHouse.rain.events.EventListener;
 import st.whineHouse.rain.events.types.MousePressedEvent;
 import st.whineHouse.rain.events.types.MouseReleasedEvent;
-import st.whineHouse.rain.gx.AnimatedSprite;
+import st.whineHouse.raincloud.graphics.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
-import st.whineHouse.rain.gx.Sprite;
-import st.whineHouse.rain.gx.SpriteSheet;
+import st.whineHouse.raincloud.graphics.Sprite;
+import st.whineHouse.raincloud.graphics.SpriteSheet;
 import st.whineHouse.rain.gx.ui.UIActionListener;
 import st.whineHouse.rain.gx.ui.UIButton;
-import st.whineHouse.rain.gx.ui.UIButtonListener;
 import st.whineHouse.rain.gx.ui.UILabel;
 import st.whineHouse.rain.gx.ui.UIManager;
 import st.whineHouse.rain.gx.ui.UIPanel;
 import st.whineHouse.rain.gx.ui.UIProgressBar;
 import st.whineHouse.rain.input.Keyboard;
 import st.whineHouse.rain.input.Mouse;
-import st.whineHouse.rain.level.Level;
-import st.whineHouse.rain.utilities.ImageUtils;
-import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.raincloud.utility.Vector2i;
 import st.whineHouse.raincloud.net.packet.LogoutPacket;
 import st.whineHouse.raincloud.net.packet.MovePacket;
 

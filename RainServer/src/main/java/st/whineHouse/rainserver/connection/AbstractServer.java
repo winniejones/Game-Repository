@@ -1,4 +1,4 @@
-package whineHouse.rainserver.connection;
+package st.whineHouse.rainserver.connection;
 
 public abstract class AbstractServer implements Runnable {
     protected final int[] ports;

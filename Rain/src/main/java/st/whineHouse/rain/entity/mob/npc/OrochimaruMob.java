@@ -1,11 +1,11 @@
-package whineHouse.rain.entity.mob.npc;
+package st.whineHouse.rain.entity.mob.npc;
 
 import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.spawner.ParticleSpawner;
-import st.whineHouse.rain.gx.AnimatedSprite;
+import st.whineHouse.raincloud.graphics.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
-import st.whineHouse.rain.gx.Sprite;
-import st.whineHouse.rain.gx.SpriteSheet;
+import st.whineHouse.raincloud.graphics.Sprite;
+import st.whineHouse.raincloud.graphics.SpriteSheet;
 
 /**
  * Dummy-klassen som är en Mob-klass.

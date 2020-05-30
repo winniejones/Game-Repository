@@ -1,21 +1,13 @@
-package whineHouse.rainserver;
+package st.whineHouse.rainserver;
 
-import st.whineHouse.rain.Game;
-import st.whineHouse.rain.entity.Entity;
-import st.whineHouse.rain.entity.mob.Mob;
-import st.whineHouse.rain.entity.mob.npc.*;
-import st.whineHouse.rain.entity.projectile.NinjaBlade;
-import st.whineHouse.rain.entity.projectile.Projectile;
-import st.whineHouse.rain.entity.projectile.WizardProjectile;
-import st.whineHouse.rain.entity.projectile.WizzardArrow;
-import st.whineHouse.rain.level.Level;
-import st.whineHouse.rain.net.player.NetPlayer;
+import st.whineHouse.raincloud.net.host.Host;
 import st.whineHouse.raincloud.net.packet.*;
 import st.whineHouse.raincloud.serialization.RCDatabase;
 import st.whineHouse.raincloud.serialization.RCField;
 import st.whineHouse.raincloud.serialization.RCObject;
 import st.whineHouse.raincloud.serialization.Type;
 import st.whineHouse.raincloud.shared.ProjectileType;
+import st.whineHouse.rainserver.entity.ServerEntity;
 import st.whineHouse.rainserver.entity.ServerMob;
 import st.whineHouse.rainserver.projectiles.ServerProjectile;
 import st.whineHouse.rainserver.user.ServerPlayer;
@@ -30,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Server {
+public class Server extends Host {
     private int port;
     private Thread listeningThread;
     private boolean listening = false;
@@ -85,7 +77,7 @@ public class Server {
 
 
 
-    public synchronized List<ServerClient> getPlayers(Entity e, int radius){
+    public synchronized List<ServerClient> getPlayers(ServerEntity e, int radius){
         List<ServerClient> result = new ArrayList<>();
         int ex = e.getX();
         int ey = e.getY();
@@ -146,11 +138,11 @@ public class Server {
                 case 5: // projectiles
                     ProjectilePacket projectilePacket = new ProjectilePacket(filteredData);
                     handleProjectiles(projectilePacket);
-                    projectilePacket.writeData(this);
+                    projectilePacket.broadcastData(this);
                     break;
                 case 6: // projectiles
                     MobPacket mobPacket = new MobPacket(filteredData);
-                    mobPacket.writeData(this);
+                    mobPacket.broadcastData(this);
                     break;
                 default: System.out.println("Recieved packet but cannot handle response");
             }
@@ -210,9 +202,15 @@ public class Server {
 
     private void removeConnection(LogoutPacket logoutPacket){
         clients.removeIf(player -> player.username.equalsIgnoreCase(logoutPacket.getUsername()));
-        logoutPacket.writeData(this);
+        logoutPacket.broadcastData(this);
     }
 
+    @Override
+    public void send(byte[] data) throws Exception {
+        throw new Exception("Not implemented in server");
+    }
+
+    @Override
     public void broadcastToClients(byte[] data) {
         for (ServerClient p : clients) {
             send(data, p.address, p.port);
@@ -249,7 +247,7 @@ public class Server {
             player.speed = packet.getSpeed();
             player.walking = packet.isWalking();
             player.movingDir = packet.getMovingDir();
-            packet.writeData(this);
+            packet.broadcastData(this);
             level.movePlayer(packet.getUsername(),packet.getX(),packet.getY(),packet.getSpeed(),packet.isWalking());
         }
     }

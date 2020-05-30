@@ -1,15 +1,12 @@
-package whineHouse.rain.entity.mob;
+package st.whineHouse.rain.entity.mob;
 
-import java.awt.Rectangle;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import st.whineHouse.rain.Game;
 import st.whineHouse.rain.entity.Entity;
 import st.whineHouse.rain.entity.projectile.*;
 import st.whineHouse.rain.gx.Screen;
-import st.whineHouse.rain.level.Level;
 import st.whineHouse.raincloud.net.packet.ProjectilePacket;
-import st.whineHouse.rainserver.Rainserver;
 
 /**
  * Mob-klassen som är en Entity-klass
@@ -99,11 +96,7 @@ public abstract class Mob extends Entity{
 
 		// TODO: Send to server before adding
 		ProjectilePacket projectilePacket = new ProjectilePacket(weaponID,x,y,dir);
-		if(Game.game != null) {
-			projectilePacket.writeData(Game.game.client);
-		} else if (Rainserver.rainserver != null) {
-			projectilePacket.writeData(Rainserver.rainserver.getServer());
-		}
+		projectilePacket.writeData(Game.game.client);
 		//level.add(projectile);
 	}
 	

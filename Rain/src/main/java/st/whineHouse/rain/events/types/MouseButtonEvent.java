@@ -1,4 +1,4 @@
-package whineHouse.rain.events.types;
+package st.whineHouse.rain.events.types;
 
 import st.whineHouse.rain.events.Event;
 

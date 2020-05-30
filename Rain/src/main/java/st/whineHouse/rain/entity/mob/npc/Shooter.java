@@ -1,20 +1,17 @@
-package whineHouse.rain.entity.mob.npc;
+package st.whineHouse.rain.entity.mob.npc;
 
 import java.util.List;
 
 import st.whineHouse.rain.entity.Entity;
 import st.whineHouse.rain.entity.mob.Mob;
-import st.whineHouse.rain.entity.particle.Particle;
-import st.whineHouse.rain.entity.projectile.NinjaBlade;
 import st.whineHouse.rain.entity.projectile.WizzardArrow;
 import st.whineHouse.rain.entity.spawner.ParticleSpawner;
-import st.whineHouse.rain.gx.AnimatedSprite;
+import st.whineHouse.raincloud.graphics.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
-import st.whineHouse.rain.gx.Sprite;
-import st.whineHouse.rain.gx.SpriteSheet;
-import st.whineHouse.rain.utilities.Debug;
-import st.whineHouse.rain.utilities.RayCastingResult;
-import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.raincloud.graphics.Sprite;
+import st.whineHouse.raincloud.graphics.SpriteSheet;
+import st.whineHouse.raincloud.utility.RayCastingResult;
+import st.whineHouse.raincloud.utility.Vector2i;
 /**
  * Shooter-klass är en mob-klass
  * Används som testgubbe som skjuter projektiler.

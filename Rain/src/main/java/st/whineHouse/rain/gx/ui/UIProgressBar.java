@@ -1,11 +1,11 @@
-package whineHouse.rain.gx.ui;
+package st.whineHouse.rain.gx.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
 import org.w3c.dom.ranges.RangeException;
 
-import st.whineHouse.rain.utilities.Vector2i;
+import st.whineHouse.raincloud.utility.Vector2i;
 
 /**
  * UIProgressBar-klass som är en UIcomponent-klass

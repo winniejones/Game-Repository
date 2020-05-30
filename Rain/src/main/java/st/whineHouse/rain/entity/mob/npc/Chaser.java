@@ -1,14 +1,10 @@
-package whineHouse.rain.entity.mob.npc;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+package st.whineHouse.rain.entity.mob.npc;
 
 import st.whineHouse.rain.entity.mob.Mob;
-import st.whineHouse.rain.gx.AnimatedSprite;
+import st.whineHouse.raincloud.graphics.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
-import st.whineHouse.rain.gx.Sprite;
-import st.whineHouse.rain.gx.SpriteSheet;
-import st.whineHouse.rainserver.Server;
+import st.whineHouse.raincloud.graphics.Sprite;
+import st.whineHouse.raincloud.graphics.SpriteSheet;
 
 /**
  * Chaser-klassen är en Mob-klass

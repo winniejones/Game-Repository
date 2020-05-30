@@ -1,13 +1,12 @@
-package whineHouse.rain.entity;
+package st.whineHouse.rain.entity;
 
 import java.awt.Rectangle;
 import java.util.Random;
 
-import st.whineHouse.rain.gx.AnimatedSprite;
+import st.whineHouse.raincloud.graphics.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
-import st.whineHouse.rain.gx.Sprite;
+import st.whineHouse.raincloud.graphics.Sprite;
 import st.whineHouse.rain.level.Level;
-import st.whineHouse.rainserver.Server;
 
 /**
  * Entity-klass
@@ -26,7 +25,6 @@ public class Entity {
 	public int x, y;
 	private boolean removed = false;
 	protected Level level;
-	protected Server server;
 	protected final Random random = new Random();
 	protected Sprite sprite;
 	// The animation object

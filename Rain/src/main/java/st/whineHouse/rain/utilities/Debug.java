@@ -1,4 +1,4 @@
-package whineHouse.rain.utilities;
+package st.whineHouse.rain.utilities;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.rain.level.Level;
 

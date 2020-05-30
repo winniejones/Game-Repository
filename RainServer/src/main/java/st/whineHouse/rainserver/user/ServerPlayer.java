@@ -1,4 +1,4 @@
-package whineHouse.rainserver.user;
+package st.whineHouse.rainserver.user;
 
 import st.whineHouse.rainserver.entity.ServerMob;
 import st.whineHouse.rainserver.projectiles.ServerProjectile;

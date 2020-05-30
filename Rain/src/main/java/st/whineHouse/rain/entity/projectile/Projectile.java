@@ -1,9 +1,9 @@
-package whineHouse.rain.entity.projectile;
+package st.whineHouse.rain.entity.projectile;
 
 import java.util.Random;
 
 import st.whineHouse.rain.entity.Entity;
-import st.whineHouse.rain.gx.Sprite;
+import st.whineHouse.raincloud.graphics.Sprite;
 
 /**
  * Projectile-klassen är en entitets-klass
