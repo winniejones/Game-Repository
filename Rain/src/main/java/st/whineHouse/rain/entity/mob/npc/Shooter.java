@@ -52,8 +52,8 @@ public class Shooter extends Mob {
 	
 	public synchronized void update() {
 		time++;
-		mobMoving(time);
-		shootClosest();
+		// mobMoving(time);
+		//shootClosest();
 		//shootRandom();
 		if(health<=0){
 			level.add(new ParticleSpawner((int)x, (int)y, 300, 700, level, Sprite.particle_blood));
@@ -99,56 +99,7 @@ public class Shooter extends Mob {
 /**
  * Shoots at random
  */
-	private void shootRandom() {
-		List<Entity> entities = level.getEntities(this, 500);
-		entities.add(level.getClientPlayer());
-		if(time % (30 + random.nextInt(91))==0){
-			int index = random.nextInt(entities.size());
-			rand = entities.get(index);
-			//Collections.shuffle(entities);
-		}	
-		
-		if(rand != null){
-			double dx = rand.getX()-x;
-			double dy = rand.getY()-y;
-			double dir = Math.atan2(dy, dx);
-			shoot(x,y,dir,weaponID);
-		}
-		
-	}
-	
-/**
- * Shoot closest
- */
-	private void shootClosest(){
-		Mob closest = null;
-		double min = 0;
-		if(!level.getPlayers().isEmpty()){
-			List<Mob> players = level.getPlayers(this, 100);
-			// Nedanstående kod gör att gubben skjuter på närmaste entitet.
-			players.add(level.getClientPlayer());
-			for (int i = 0; i < players.size(); i++) {
-				Mob p = players.get(i);
-				double distance = Vector2i.getDistance(new Vector2i(x, y), new Vector2i(p.getX(), p.getY()));
-				if (i == 0 || distance < min) {
-					min = distance;
-					closest = p;
-				}
-			}
-		}
-		if(closest != null){
-			double dx = closest.getX()-x;
-			double dy = closest.getY()-y;
-			double dir = Math.atan2(dy, dx);
-			RayCastingResult raycast = level.RayCast(new Vector2i(x,y), dir, (int)min);
-			if(!raycast.hasCollided()){
-				if(time % WizzardArrow.FIRE_RATE == 0){
-					shoot(x, y, dir,weaponID);
-				}
-			}
-		}
-	}
-	
+
 
 	public void render(Screen screen) {
 		//screen.renderSprite(17*16, 53*16,new Sprite(80, 80, 0xff0000),true);

@@ -112,7 +112,7 @@ public class Level extends Layer{
 		remove();
 	}
 
-	private void removeProjectiles() {
+	private synchronized void removeProjectiles() {
 		projectiles.removeIf(Entity::isRemoved);
 	}
 
@@ -123,11 +123,17 @@ public class Level extends Layer{
 	/**
 	 * Tar bort "döda" entiteter från listor. Projectiler som har skjutits behöver tas bort m.m.
 	 */
-	private void remove(){
+	private synchronized void remove(){
 		for( int i = 0; i < entities.size(); i++){
 			if(entities.get(i).isRemoved()) entities.remove(i);
 		}
-		removeProjectiles();
+		for (int i = 0; i < projectiles.size(); i++) {
+			Projectile proj = projectiles.get(i);
+			if (proj.isRemoved()){
+				//logProjectile(proj);
+				projectiles.remove(i);
+			}
+		}
 		for( int i = 0; i < particles.size(); i++){
 			if(particles.get(i).isRemoved()) particles.remove(i);
 		}
@@ -137,6 +143,14 @@ public class Level extends Layer{
 		for( int i = 0; i < mobs.size(); i++){
 			if(mobs.get(i).isRemoved()) mobs.remove(i);
 		}
+	}
+
+	private void logProjectile(Projectile proj) {
+		System.out.println(
+				proj.getClass().getSimpleName() + " is removed on ("
+						+ proj.getX() + ","
+						+ proj.getY() + "): (x,y))"
+		);
 	}
 
 	/**
@@ -232,6 +246,7 @@ public class Level extends Layer{
 		if(e instanceof Particle){
 			particles.add((Particle)e);
 		}else if(e instanceof Projectile){
+			//logProjectile(e);
 			projectiles.add((Projectile)e);
 		}
 		else if(e instanceof Player){
@@ -245,17 +260,25 @@ public class Level extends Layer{
 		}
 	}
 
+	private void logProjectile(Entity e) {
+		System.out.println("adding projectile: "
+				+ e.getClass().getSimpleName() + ", at angle: "
+				+ ((Projectile) e).getAngle() + " , from point: ("
+				+ ((Projectile) e).getX() + ","
+				+ ((Projectile) e).getY() );
+	}
+
 	public synchronized void addProjectile(ProjectilePacket projectilePacket) {
 		Projectile projectile = null;
 		switch (projectilePacket.getProjectileType()){
-			case 1:
+			case 2:
 				projectile = new WizzardArrow(
 						projectilePacket.getX(),
 						projectilePacket.getY(),
 						projectilePacket.getDir()
 				);
 				break;
-			case 2:
+			case 1:
 				projectile = new NinjaBlade(
 						projectilePacket.getX(),
 						projectilePacket.getY(),
@@ -282,10 +305,7 @@ public class Level extends Layer{
 		mobs.add(mob);
 		System.out.println("added " + mob.getClass().getSimpleName() +" mob on: ("+ mob.x + ", "+ mob.y +")");
 	}
-	
-	/**
-	 * Get-listor för att kunna hämta från andra klasser.
-	 */
+
 	public List<Mob> getPlayers(){
 		return players;
 	}
@@ -456,13 +476,13 @@ public class Level extends Layer{
 	 */
 	public synchronized List<Entity> getEntities(Entity e, int radius){
 		List<Entity> result = new ArrayList<Entity>();
-		int ex = (int)e.getX();
-		int ey = (int)e.getY();
+		int ex = (int)e.x;
+		int ey = (int)e.y;
 		for(int i =0; i < entities.size(); i++){
 			Entity entity = entities.get(i);
 			if(entity.equals(e)) continue;
-			int x = (int)entity.getX();
-			int y = (int)entity.getY();
+			int x = (int)entity.x;
+			int y = (int)entity.y;
 			int dx = Math.abs(x - ex);
 			int dy = Math.abs(y - ey);
 			double distance = Math.sqrt((dx*dx)+(dy*dy));
@@ -478,12 +498,12 @@ public class Level extends Layer{
 	 */
 	public List<Mob> getMobs(Entity e, int radius){
 		List<Mob> result = new ArrayList<Mob>();
-		int ex = (int)e.getX();
-		int ey = (int)e.getY();
+		int ex = (int)e.x;
+		int ey = (int)e.y;
 		for(int i =0; i< mobs.size(); i++){
 			Mob mob = mobs.get(i);
-			int x = (int)mob.getX();
-			int y = (int)mob.getY();
+			int x = (int)mob.x;
+			int y = (int)mob.y;
 			int dx = Math.abs(x - ex);
 			int dy = Math.abs(y - ey);
 			double distance = Math.sqrt((dx*dx)+(dy*dy));
@@ -499,12 +519,12 @@ public class Level extends Layer{
 	 */
 	public synchronized List<Mob> getPlayers(Entity e, int radius){
 		List<Mob> result = new ArrayList<>();
-		int ex = e.getX();
-		int ey = e.getY();
+		int ex = e.x;
+		int ey = e.y;
 		for(int i =0; i< players.size(); i++){
 			Mob player = players.get(i);
-			int x = player.getX();
-			int y = player.getY();
+			int x = player.x;
+			int y = player.y;
 			int dx = Math.abs(x - ex);
 			int dy = Math.abs(y - ey);
 			double distance = Math.sqrt((dx*dx)+(dy*dy));

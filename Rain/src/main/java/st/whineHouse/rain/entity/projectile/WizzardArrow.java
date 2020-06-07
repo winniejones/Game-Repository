@@ -47,10 +47,10 @@ public class WizzardArrow extends Projectile {
 
 	private void projectileCollision(){
 		for (int i = 0; i < level.mobs.size(); i++) {
-			if (x < level.mobs.get(i).getX() + 17
-					&& x > level.mobs.get(i).getX() - 17// creates a 32x32 boundary, change it if your mobs are not 32x32
-					&& y < level.mobs.get(i).getY() + 17
-					&& y > level.mobs.get(i).getY() - 17
+			if (x < level.mobs.get(i).x + 17
+					&& x > level.mobs.get(i).x - 17// creates a 32x32 boundary, change it if your mobs are not 32x32
+					&& y < level.mobs.get(i).y + 17
+					&& y > level.mobs.get(i).y - 17
 			) {
 				remove();
 				level.add(new ParticleSpawner((int) x, (int) y, life, amount, level, Sprite.particle_blood));

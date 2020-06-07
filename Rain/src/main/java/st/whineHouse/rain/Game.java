@@ -242,8 +242,8 @@ public class Game extends Canvas implements Runnable, EventListener {
 			return;
 		}
 		screen.clear();
-		double xScroll = player.getX() - screen.width /2;
-		double yScroll = player.getY() - screen.height /2;
+		double xScroll = player.x - screen.width /2;
+		double yScroll = player.y - screen.height /2;
 		level.setScroll((int)xScroll, (int)yScroll);
 		
 		//Render Layers here! Sköter nu alla renderingar

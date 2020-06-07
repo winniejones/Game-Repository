@@ -56,13 +56,23 @@ public class ServerProjectile extends ServerEntity {
 		this.life = life;
 		this.nx = speed * Math.cos(angle);
 		this.ny = speed * Math.sin(angle);
+		this.fireRate = 2;
 	}
 
 	public void update(){
 		if(level.tileCollision((int)(x + nx),(int) (y+ ny), 7 , 5, 4)){
+			//logIsRemoved();
 			remove();
 		}
 		move();
+	}
+
+	private void logIsRemoved() {
+		System.out.println(
+				type + " is removed on ("
+				+ (x + nx) + ","
+				+ (y+ ny) + "): (x,y))"
+		);
 	}
 
 	private void move(){
@@ -77,4 +87,11 @@ public class ServerProjectile extends ServerEntity {
 		return dist;
 	}
 
+	public ProjectileType getType(){
+		return type;
+	}
+
+	public int getFireRate(){
+		return fireRate;
+	}
 }

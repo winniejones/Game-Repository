@@ -126,15 +126,15 @@ public class Quadtree{
         int index = -1;
         double verticalMidpoint = bounds.getX() + (bounds.getWidth() / 2);
         double horizontalMidpoint = bounds.getY() + (bounds.getHeight() / 2);
-        boolean topQuadrant = (entity.getY() < horizontalMidpoint && entity.getY() + entity.getHeight() < horizontalMidpoint);
-        boolean bottomQuadrant = (entity.getY() > horizontalMidpoint);
-        if (entity.getX() < verticalMidpoint && entity.getX() + entity.getWidth() < verticalMidpoint){
+        boolean topQuadrant = (entity.y < horizontalMidpoint && entity.y + entity.getHeight() < horizontalMidpoint);
+        boolean bottomQuadrant = (entity.y > horizontalMidpoint);
+        if (entity.x < verticalMidpoint && entity.x + entity.getWidth() < verticalMidpoint){
             if (topQuadrant){
                 index = 1;
             } else if (bottomQuadrant){
                 index = 2;
             }
-        } else if (entity.getX() > verticalMidpoint){
+        } else if (entity.x > verticalMidpoint){
             if (topQuadrant){
                 index = 0;
             } else if (bottomQuadrant){

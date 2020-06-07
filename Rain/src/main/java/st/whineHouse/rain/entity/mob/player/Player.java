@@ -50,7 +50,7 @@ public class Player extends Mob implements EventListener {
     private int gameScreenBoundry;
 
     //TODO: This should be a class for weapons and change to one property 'private Weapon equippedWeapon'
-    private int weaponID = 1;  // weaponID om 1 = arrow, 2 = wizard, 3 = ninjablade
+    private int weaponID = 2;  // weaponID om 1 = arrow, 2 = wizard, 3 = ninjablade
     Projectile p;
     private int fireRate = 0;
 

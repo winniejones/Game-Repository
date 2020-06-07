@@ -48,10 +48,10 @@ public class Grid {
 
     public void addEntity(Entity entity)
     {
-    	int topLeftX = Math.max(0,entity.getX() / cellSize);
-    	int topLeftY = Math.max(0,entity.getY() / cellSize);
-    	int bottomRightX = Math.min(cols-1, (entity.getX() + entity.getWidth() - 1) / cellSize);
-    	int bottomRightY = Math.min(rows-1, (entity.getY() + entity.getHeight() - 1) / cellSize);
+    	int topLeftX = Math.max(0,entity.x / cellSize);
+    	int topLeftY = Math.max(0,entity.y / cellSize);
+    	int bottomRightX = Math.min(cols-1, (entity.x + entity.getWidth() - 1) / cellSize);
+    	int bottomRightY = Math.min(rows-1, (entity.y + entity.getHeight() - 1) / cellSize);
     	
     	for (int x = topLeftX; x <= bottomRightX; x++)
     	{
@@ -66,10 +66,10 @@ public class Grid {
     {
     	retrieveList.clear();
         // Calculate the positions again
-        int topLeftX = Math.max(0, e.getX() / cellSize);
-        int topLeftY = Math.max(0, e.getY() / cellSize);
-        int bottomRightX = Math.min(cols-1, (e.getX() + e.getWidth() -1) / cellSize);
-        int bottomRightY = Math.min(rows-1, (e.getY() + e.getHeight() -1) / cellSize);
+        int topLeftX = Math.max(0, e.x / cellSize);
+        int topLeftY = Math.max(0, e.y / cellSize);
+        int bottomRightX = Math.min(cols-1, (e.x + e.getWidth() -1) / cellSize);
+        int bottomRightY = Math.min(rows-1, (e.y + e.getHeight() -1) / cellSize);
         for (int x = topLeftX; x <= bottomRightX; x++)
         {
             for (int y = topLeftY; y <= bottomRightY; y++)
@@ -100,7 +100,7 @@ public class Grid {
         {
             Entity toCheck = collidables.get(i);
             // Check the distance
-            long dist = (toCheck.getX()-e.getX())*(toCheck.getX()-e.getX()) + (toCheck.getY()-e.getY())*(toCheck.getY()-e.getY());
+            long dist = (toCheck.x-e.x)*(toCheck.x-e.x) + (toCheck.y-e.y)*(toCheck.y-e.y);
             if (dist < distance)
             {
                 nearest = toCheck;
