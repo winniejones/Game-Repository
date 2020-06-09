@@ -27,7 +27,7 @@ public class ServerPlayer extends ServerMob {
         this.p = new ServerProjectile(x,y,1d, WIZARDPROJECTILE);
         this.health = 100;
         this.speed = 2.0;
-        System.out.println("is created at position.. x: " +x+" y: "+y);
+        System.out.println("is created at position " + x + ", " +y + ": (x,y)");
     }
 
     @Override

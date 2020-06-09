@@ -1,5 +1,6 @@
 package st.whineHouse.rainserver.entity;
 
+import st.whineHouse.raincloud.graphics.Sprite;
 import st.whineHouse.raincloud.net.packet.MovePacket;
 import st.whineHouse.raincloud.net.packet.ProjectilePacket;
 import st.whineHouse.raincloud.shared.MobType;
@@ -54,10 +55,30 @@ public class ServerMob extends ServerEntity {
     }
 
     private void setProperties(MobType type) {
-        if (MobType.HIROKU.equals(type)) {
-            this.speed = 0.85;
-        } else {
-            this.speed = 1;
+        switch (type) {
+            case HIROKU:
+                this.speed = 0.85;
+                this.health = 70;
+                break;
+            case ITACHI:
+                this.speed = 1;
+                this.health = 500;
+                break;
+            case KISUNE:
+                this.speed = 1.25;
+                this.health = 300;
+                break;
+            case DEIDARA:
+                this.speed = 2;
+                this.health = 300;
+                break;
+            case OROCHIMARU:
+                this.speed = 1;
+                this.health = 100;
+                break;
+            default:
+                this.speed = 1;
+                break;
         }
     }
 
@@ -185,8 +206,13 @@ public class ServerMob extends ServerEntity {
     public void update() {
         time++;
         super.update();
-        moveRandom(time);
+        //moveRandom(time);
+        move();
         shootClosest();
+        if(health<=0){
+            //System.out.println(type + " is ded");
+            remove();
+        }
     }
 
     private void move() {
@@ -210,7 +236,6 @@ public class ServerMob extends ServerEntity {
         if (!level.getPlayers().isEmpty()) {
             List<ServerMob> players = level.getPlayers(this, 100);
 
-            //players.add(level.getPlayers(this,10).get(0));
             for (int i = 0; i < players.size(); i++) {
                 ServerMob p = players.get(i);
                 double distance = Vector2i.getDistance(new Vector2i(x, y), new Vector2i(p.getX(), p.getY()));
@@ -228,7 +253,7 @@ public class ServerMob extends ServerEntity {
             if (!raycast.hasCollided()) {
                 if (time % 60 == 0) {
                     try {
-                        //System.out.println(type + " is shooting from point (" + x + "," + y + ")");
+                        // System.out.println(type + " is shooting from point (" + x + "," + y + ")");
                         shoot(x, y, dir, weaponID);
                     } catch (Exception e) {
                         e.printStackTrace();

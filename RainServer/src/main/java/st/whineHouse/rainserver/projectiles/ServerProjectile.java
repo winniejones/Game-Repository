@@ -1,9 +1,18 @@
 package st.whineHouse.rainserver.projectiles;
 
+import st.whineHouse.raincloud.graphics.Sprite;
+import st.whineHouse.raincloud.shared.MobType;
 import st.whineHouse.raincloud.shared.ProjectileType;
+import st.whineHouse.rainserver.Rainserver;
 import st.whineHouse.rainserver.entity.ServerEntity;
+import st.whineHouse.rainserver.entity.ServerMob;
+import st.whineHouse.rainserver.user.ServerPlayer;
 
+import java.util.List;
 import java.util.Random;
+
+import static st.whineHouse.raincloud.shared.ProjectileType.WIZARDARROW;
+import static st.whineHouse.raincloud.shared.ProjectileType.WIZARDPROJECTILE;
 
 /**
  * Projectile-klassen är en entitets-klass
@@ -65,6 +74,41 @@ public class ServerProjectile extends ServerEntity {
 			remove();
 		}
 		move();
+		if(WIZARDPROJECTILE.equals(type)){
+			hitMob();
+		} else {
+			hitPlayer();
+		}
+	}
+
+
+	private void hitPlayer(){
+		List<ServerPlayer> players = Rainserver.rainserver.level.players;
+		for (int i = 0; i < players.size(); i++) {
+			if (x < players.get(i).x + 10
+					&& x > players.get(i).x - 10// creates a 32x32 boundary, change it if your mobs are not 32x32
+					&& y < players.get(i).y + 17
+					&& y > players.get(i).y - 17
+			) {
+				remove();
+				players.get(i).health -= 50; //only if your entities have health
+			}
+		}
+	}
+
+	private void hitMob() {
+		List<ServerMob> mobs = Rainserver.rainserver.level.getMobs();
+		for (int i = 0; i < mobs.size(); i++) {
+			if (x < mobs.get(i).x + 17
+					&& x > mobs.get(i).x - 17// creates a 32x32 boundary, change it if your mobs are not 32x32
+					&& y < mobs.get(i).y + 17
+					&& y > mobs.get(i).y - 17
+			) {
+				remove();
+				System.out.println(mobs.get(i).getClass().getSimpleName() + " has been shot");
+				mobs.get(i).health -= 100; //only if your entities have health
+			}
+		}
 	}
 
 	private void logIsRemoved() {

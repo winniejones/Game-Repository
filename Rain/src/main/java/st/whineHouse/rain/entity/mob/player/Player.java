@@ -110,10 +110,10 @@ public class Player extends Mob implements EventListener {
             panel.addComponent(nameLabel);
 
 // healthbar placering och f�rgl�ggning
-            uiHealthBar = new UIProgressBar(new Vector2i(10, 210), new Vector2i(Game.panelSize * Game.scale - 20, 15));        // helthbar (position (x,y), size (x,y))
-            uiHealthBar.setColor(0x6a6a6a);
-            uiHealthBar.setForegroundColor(0x6add6a);
-            panel.addComponent(uiHealthBar);
+           uiHealthBar = new UIProgressBar(new Vector2i(10, 210), new Vector2i(Game.panelSize * Game.scale - 20, 15));        // helthbar (position (x,y), size (x,y))
+           uiHealthBar.setColor(0x6a6a6a);
+           uiHealthBar.setForegroundColor(0x6add6a);
+           panel.addComponent(uiHealthBar);
 
 // HP textning i panelen
             hpLabel = new UILabel(new Vector2i(uiHealthBar.position).add(new Vector2i(2, 12)), "HP");
@@ -252,6 +252,7 @@ public class Player extends Mob implements EventListener {
         double dy = Mouse.getY() - (Game.getWindowHeight() / 2);
         double dir = Math.atan2(dy, dx);
         shoot(x, y, dir, weaponID);
+        // System.out.println(this.getClass().getSimpleName() + "is shooting");
         fireRate = WizardProjectile.FIRE_RATE;
     }
 

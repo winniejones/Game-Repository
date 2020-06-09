@@ -4,6 +4,7 @@ import st.whineHouse.rain.entity.Entity;
 import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.projectile.WizzardArrow;
 import st.whineHouse.rain.entity.spawner.ParticleSpawner;
+import st.whineHouse.rain.gx.ui.UILabel;
 import st.whineHouse.raincloud.graphics.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.raincloud.graphics.Sprite;
@@ -87,6 +88,9 @@ public class ItachiMob extends Mob {
 		
 		sprite = animSprite.getSprite();
 		//Debug.drawRect(screen, 50, 50, 16, 16, false);
+		if(health > 0)
+			screen.drawRect(x - positionOffset,y - (positionOffset+2),(int)(0.32*(health/5)),1,0x6add6a, true);
+
 		screen.renderMob(x-16, y-16, this);
 	}
 

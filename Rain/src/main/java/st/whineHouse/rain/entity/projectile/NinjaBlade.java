@@ -32,7 +32,7 @@ public class NinjaBlade extends Projectile {
 	
 	public void update(){
 		removeIfTileCollision();
-		removeIfProjectileCollision();
+		hitPlayer();
 		rotateSprite();
 		move();
 	}
@@ -52,7 +52,7 @@ public class NinjaBlade extends Projectile {
 	}
 
 	// Check if projectile is colliding
-	private void removeIfProjectileCollision(){
+	private void hitPlayer(){
 		for (int i = 0; i < level.players.size(); i++) {
 			if (x < level.players.get(i).x + 10
 					&& x > level.players.get(i).x - 10// creates a 32x32 boundary, change it if your mobs are not 32x32

@@ -107,6 +107,9 @@ public class DeidaraMob extends Mob {
 
 	public void render(Screen screen) {
 		sprite = animSprite.getSprite();
+		if(health > 0)
+			screen.drawRect(x - positionOffset,y - (positionOffset+2),(int)(0.32*(health/3)),1,0x6add6a, true);
+
 		screen.renderMob((x - 16), (y - 16), this);
 
 	}

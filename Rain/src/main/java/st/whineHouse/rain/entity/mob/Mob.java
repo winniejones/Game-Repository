@@ -7,6 +7,7 @@ import st.whineHouse.rain.Game;
 import st.whineHouse.rain.entity.Entity;
 import st.whineHouse.rain.entity.projectile.*;
 import st.whineHouse.rain.gx.Screen;
+import st.whineHouse.rain.gx.ui.UILabel;
 import st.whineHouse.raincloud.net.packet.ProjectilePacket;
 import st.whineHouse.raincloud.utility.RayCastingResult;
 import st.whineHouse.raincloud.utility.Vector2i;
@@ -30,6 +31,9 @@ public abstract class Mob extends Entity{
 	protected Boolean isColliding = false;
 	protected int time=0;
 	private Entity randtarget = null;
+	protected UILabel hpLabel;
+	protected UILabel screenNameLabel;
+	protected int positionOffset = Game.mobPixelSize/2;
 	
 	protected enum Direction{
 		UP,DOWN,LEFT,RIGHT
