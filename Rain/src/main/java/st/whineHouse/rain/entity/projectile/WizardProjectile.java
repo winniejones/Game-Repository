@@ -42,23 +42,25 @@ public class WizardProjectile extends Projectile {
 			remove();
 		}
 		move();
-		
+
+		hitMob();
+	}
+
+	private void hitMob() {
 		for (int i = 0; i < level.players.size(); i++) {
-	         if (x < level.players.get(i).getX() +13
-	            && x > level.players.get(i).getX() -13// creates a 32x32 boundary, change it if your mobs are not 32x32
-	            && y <  level.players.get(i).getY() +17
-	            && y >  level.players.get(i).getY() -17
+	         if (x < level.players.get(i).x +13
+	            && x > level.players.get(i).x -13// creates a 32x32 boundary, change it if your mobs are not 32x32
+	            && y <  level.players.get(i).y +17
+	            && y >  level.players.get(i).y -17
 	            ) {
 	            remove();
 	            level.add(new ParticleSpawner((int) x, (int) y, life, amount, level, Sprite.particle_blood));
 	            level.players.get(i).health -= 1; //only if your entities have health
-
 	         }
 		}
 	}
-	
-	
-	
+
+
 	protected void move(){
 		x += nx;
 		y += ny;	

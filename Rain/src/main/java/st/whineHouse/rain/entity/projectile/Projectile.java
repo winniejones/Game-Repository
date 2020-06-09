@@ -54,4 +54,15 @@ public abstract class Projectile extends Entity {
 		return sprite.SIZE;
 	}
 
+	public double getAngle(){
+		return angle;
+	}
+
+	public double getX() {
+		return x;
+	}
+
+	public double getY() {
+		return y;
+	}
 }

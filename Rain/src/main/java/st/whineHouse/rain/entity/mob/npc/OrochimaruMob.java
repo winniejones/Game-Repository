@@ -103,6 +103,8 @@ public class OrochimaruMob extends Mob {
 	public void render(Screen screen) {
 		sprite = animSprite.getSprite();
 		screen.renderMob((int)(x - 16), (int)(y - 16), sprite, 0);
+		if(health > 0)
+			screen.drawRect(x - positionOffset,y - (positionOffset+2),(int)(0.32*(health)),1,0x6add6a, true);
 	}
 
 }

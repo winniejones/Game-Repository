@@ -160,14 +160,14 @@ public class Client extends Host {
     private void handleProjectiles(ProjectilePacket projectilePacket) {
         Projectile projectile = null;
         switch (projectilePacket.getProjectileType()){
-            case 1:
+            case 2:
                 projectile = new WizzardArrow(
                         projectilePacket.getX(),
                         projectilePacket.getY(),
                         projectilePacket.getDir()
                         );
                 break;
-            case 2:
+            case 1:
                 projectile = new NinjaBlade(
                         projectilePacket.getX(),
                         projectilePacket.getY(),
@@ -211,15 +211,15 @@ public class Client extends Host {
                         mobPacket.getId()
                 );
                 break;
-            case 4:
+            case 5:
                 mob= new OrochimaruMob(
                         mobPacket.getX(),
                         mobPacket.getY(),
                         mobPacket.getId()
                 );
                 break;
-            case 5:
-                mob= new Shooter(
+            case 4:
+                mob= new KisuneMob(
                         mobPacket.getX(),
                         mobPacket.getY(),
                         mobPacket.getId()

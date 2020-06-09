@@ -31,26 +31,33 @@ public class NinjaBlade extends Projectile {
 	private int time = 0;
 	
 	public void update(){
-		level.add(new ParticleSpawner((int)x, (int)y, life, amount, level,particle));
-		remove();
+		removeIfTileCollision();
+		hitPlayer();
+		rotateSprite();
+		move();
+	}
+
+	private void rotateSprite() {
 		time++;
 		if(time % 6 ==0){
 			sprite = Sprite.rotate(sprite, Math.PI / 20.0);  //spriten roterar krig sin egen axel
 		}
-		projectileCollision();
-		
-		move();
-		
-		
 	}
-	
+
+	private void removeIfTileCollision() {
+		if(level.tileCollision((int)(x + nx),(int) (y+ ny), 7 , 5, 4)){
+			level.add(new ParticleSpawner((int)x, (int)y, life, amount, level,particle));
+			remove();
+		}
+	}
+
 	// Check if projectile is colliding
-	private void projectileCollision(){
+	private void hitPlayer(){
 		for (int i = 0; i < level.players.size(); i++) {
-			if (x < level.players.get(i).getX() + 10
-					&& x > level.players.get(i).getX() - 10// creates a 32x32 boundary, change it if your mobs are not 32x32
-					&& y < level.players.get(i).getY() + 17
-					&& y > level.players.get(i).getY() - 17
+			if (x < level.players.get(i).x + 10
+					&& x > level.players.get(i).x - 10// creates a 32x32 boundary, change it if your mobs are not 32x32
+					&& y < level.players.get(i).y + 17
+					&& y > level.players.get(i).y - 17
 			) {
 				level.add(new ParticleSpawner((int) x, (int) y, life, amount, level, Sprite.particle_blood));
 				remove();

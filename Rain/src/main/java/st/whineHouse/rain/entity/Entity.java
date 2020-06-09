@@ -59,14 +59,6 @@ public class Entity {
 		removed = true;
 	}
 	
-	public int getX(){
-		return x;
-	}
-	
-	public int getY(){
-		return y;
-	}
-	
 	public Sprite getSprite(){
 		return sprite;
 	}

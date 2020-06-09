@@ -96,6 +96,8 @@ public class KisuneMob extends Mob {
 	public void render(Screen screen) {
 		sprite = animSprite.getSprite();
 		screen.renderMob((int)(x - 16), (int)(y - 16), this);
+		if(health > 0)
+			screen.drawRect(x - positionOffset,y - (positionOffset+2),(int)(0.32*(health/3)),1,0x6add6a, true);
 	}
 
 }

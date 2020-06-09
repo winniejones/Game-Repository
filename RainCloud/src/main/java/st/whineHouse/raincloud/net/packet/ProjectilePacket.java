@@ -3,6 +3,8 @@ package st.whineHouse.raincloud.net.packet;
 import st.whineHouse.raincloud.net.host.Host;
 import st.whineHouse.raincloud.utility.BinaryWriter;
 
+import java.util.Arrays;
+
 import static st.whineHouse.raincloud.net.packet.PacketType.PROJECTILE;
 
 public class ProjectilePacket extends Packet {
@@ -14,8 +16,8 @@ public class ProjectilePacket extends Packet {
         super(PROJECTILE);
         String[] dataArray = readData(data).split(",");
         this.projectileType = Integer.parseInt(dataArray[0]);
-        this.x = Float.parseFloat(dataArray[1]);
-        this.y = Float.parseFloat(dataArray[2]);
+        this.x = Double.parseDouble(dataArray[1]);
+        this.y = Double.parseDouble(dataArray[2]);
         this.dir = Float.parseFloat(dataArray[3]);
     }
 
@@ -38,6 +40,7 @@ public class ProjectilePacket extends Packet {
     @Override
     public void broadcastData(Host server) {
         try {
+            //System.out.println("projectilepacket: "+ toString());
             server.broadcastToClients(getData());
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,9 +54,9 @@ public class ProjectilePacket extends Packet {
         writer.write(PROJECTILE.getId());
         writer.write((
             this.projectileType + "," +
-            x + "," +
-            y + "," +
-            dir + ","
+            this.x + "," +
+            this.y + "," +
+            this.dir + ","
         ).getBytes());
         return writer.getBuffer();
     }
@@ -73,5 +76,12 @@ public class ProjectilePacket extends Packet {
 
     public double getY() {
         return y;
+    }
+
+    public String toString(){
+        return
+                "type: " + getProjectileType()
+                + ", dir: " + getDir() + ", "+
+                + getX() + ","+ getY()+ ": (x,y)";
     }
 }

@@ -4,6 +4,7 @@ import st.whineHouse.rain.entity.Entity;
 import st.whineHouse.rain.entity.mob.Mob;
 import st.whineHouse.rain.entity.projectile.WizzardArrow;
 import st.whineHouse.rain.entity.spawner.ParticleSpawner;
+import st.whineHouse.rain.gx.ui.UILabel;
 import st.whineHouse.raincloud.graphics.AnimatedSprite;
 import st.whineHouse.rain.gx.Screen;
 import st.whineHouse.raincloud.graphics.Sprite;
@@ -21,7 +22,7 @@ public class ItachiMob extends Mob {
 	private AnimatedSprite right = new AnimatedSprite(SpriteSheet.itachi_right, 32, 32, 3);
 	private AnimatedSprite animSprite = down;
 	
-	private int time=0;
+	//private int time=0;
 	private int xa = 0, ya = 0;
 	private Entity rand = null;
 	
@@ -48,7 +49,7 @@ public class ItachiMob extends Mob {
 		//if(level.isServer()){
 		//	mobMoving(time);
 		//}
-		shootClosest();
+		//shootClosest();
 		//shootRandom();
 		
 		if(health<=0){
@@ -56,43 +57,6 @@ public class ItachiMob extends Mob {
 			remove();
 		}
 	}
-	
-	//private void mobMoving(int time){
-	//	if(time % (random.nextInt(50)+30) == 0){
-	//		xa = random.nextInt(3)-1;
-	//		ya = random.nextInt(3)-1;
-	//		if(random.nextInt(3)==0){
-	//			xa = 0;
-	//			ya = 0;
-	//		}
-	//	}
-	//	if(walking) animSprite.update();
-	//	else animSprite.setFrame(0);
-	//
-	//	if(ya<0){
-	//		animSprite = up;
-	//		dir = Direction.UP;
-	//	}else if(ya>0) {
-	//		animSprite = down;
-	//		dir = Direction.DOWN;
-	//	}
-	//	if(xa<0) {
-	//		animSprite = left;
-	//		dir=Direction.LEFT;
-	//	}else if(xa>0){
-	//		animSprite = right;
-	//		dir=Direction.RIGHT;
-	//	}
-	//
-	//	if(xa !=0 || ya !=0){
-	//		move(xa,ya);
-	//		MovePacket movePacket = new MovePacket(id, x, y, 1, walking, 1,true);
-	//		movePacket.writeData(server);
-	//		walking = true;
-	//	}else{
-	//		walking = false;
-	//	}
-	//}
 	
 /**
  * Shoots at random
@@ -107,10 +71,10 @@ public class ItachiMob extends Mob {
 		}	
 		
 		if(rand != null){
-			double dx = rand.getX()-x;
-			double dy = rand.getY()-y;
+			double dx = rand.x-x;
+			double dy = rand.y-y;
 			double dir = Math.atan2(dy, dx);
-			shoot(x,y,dir,weaponID);
+			// shoot(x,y,dir,weaponID);
 		}
 		
 	}
@@ -118,42 +82,15 @@ public class ItachiMob extends Mob {
 /**
  * Shoot closest
  */
-	private void shootClosest(){
-
-		Mob closest = null;
-		double min = 0;
-		if(!level.getPlayers().isEmpty()){
-			List<Mob> players = level.getPlayers(this, 100);
-			// Nedanstående kod gör att gubben skjuter på närmaste entitet.
-			players.add(level.getClientPlayer());
-			for (int i = 0; i < players.size(); i++) {
-				Mob p = players.get(i);
-				double distance = Vector2i.getDistance(new Vector2i(x, y), new Vector2i(p.getX(), p.getY()));
-				if (i == 0 || distance < min) {
-					min = distance;
-					closest = p;
-				}
-			}
-		}
-		if(closest != null){
-			double dx = closest.getX()-x;
-			double dy = closest.getY()-y;
-			double dir = Math.atan2(dy, dx);
-			RayCastingResult raycast = level.RayCast(new Vector2i(x,y), dir, (int)min);
-			if(!raycast.hasCollided()){
-				if(time % WizzardArrow.FIRE_RATE == 0){
-					shoot(x, y, dir,weaponID);
-				}
-			}
-		}
-	}
-	
 
 	public void render(Screen screen) {
 		//screen.renderSprite(17*16, 53*16,new Sprite(80, 80, 0xff0000),true);
 		
 		sprite = animSprite.getSprite();
 		//Debug.drawRect(screen, 50, 50, 16, 16, false);
+		if(health > 0)
+			screen.drawRect(x - positionOffset,y - (positionOffset+2),(int)(0.32*(health/5)),1,0x6add6a, true);
+
 		screen.renderMob(x-16, y-16, this);
 	}
 

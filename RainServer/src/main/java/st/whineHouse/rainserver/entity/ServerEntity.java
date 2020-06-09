@@ -1,5 +1,6 @@
 package st.whineHouse.rainserver.entity;
 
+import st.whineHouse.raincloud.graphics.Sprite;
 import st.whineHouse.rainserver.Server;
 import st.whineHouse.rainserver.world.ServerLevel;
 
@@ -13,11 +14,12 @@ public class ServerEntity {
 	protected ServerLevel level;
 	protected Server server;
 	protected final Random random = new Random();
+	protected Sprite sprite;
 	// The animation object
     private Rectangle bounds;
 
 	//TODO: Fixa detta
-	protected int xOff, yOff;
+	protected int xBound, yBound, xOff, yOff;
 
 	//Constructor
 	public ServerEntity(){
@@ -28,6 +30,13 @@ public class ServerEntity {
 		this.x = x;
 		this.y = y;
 		this.bounds = bounds;
+	}
+
+	public ServerEntity(int x , int y){
+		this.x = x;
+		this.y = y;
+		this.sprite = new Sprite(32, 0xAAAAAA);
+		this.bounds = new Rectangle((int) x - (sprite.getWidth() >> 1), (int) y - (sprite.getHeight() >> 1), sprite.getWidth(), sprite.getHeight());
 	}
 	
 	public void update(){
@@ -49,6 +58,10 @@ public class ServerEntity {
 	
 	public boolean isRemoved(){
 		return removed;
+	}
+
+	public Sprite getSprite(){
+		return sprite;
 	}
 	
 	public void init(ServerLevel level){

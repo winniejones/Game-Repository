@@ -104,8 +104,7 @@ public class ServerLevel {
 	 */
 	private void remove(){
 		for (int i = 0; i < projectiles.size(); i++) {
-			ServerProjectile p = projectiles.get(i);
-			if (p.isRemoved()){
+			if (projectiles.get(i).isRemoved()){
 				projectiles.remove(i);
 			}
 		}
@@ -175,7 +174,7 @@ public class ServerLevel {
 	 * Funktion för att lägga till entiteter på leveln.
 	 */
 	public synchronized void add(ServerEntity e){
-		//e.init(this);
+		e.init(this);
 		if(e instanceof ServerProjectile){
 			projectiles.add((ServerProjectile)e);
 		}
@@ -207,17 +206,17 @@ public class ServerLevel {
 	}
 
 	public synchronized void addProjectile(ServerProjectile projectile) {
+		projectile.init(this);
 		projectiles.add(projectile);
 	}
 
 	public synchronized void addPlayer(ServerPlayer player) {
-		if(Rainserver.rainserver !=null)
-			//player.init(this, Rainserver.rainserver.getServer());
+		player.init(this);
 
 		players.add(player);
 	}
 	public synchronized void addMob(ServerMob mob) {
-		//mob.init(this, Rainserver.rainserver.getServer());
+		mob.init(this);
 		mobs.add(mob);
 		System.out.println("added " + mob.getClass().getSimpleName() +" mob on: ("+ mob.x + ", "+ mob.y +")");
 	}
@@ -226,7 +225,7 @@ public class ServerLevel {
 	/**
 	 * Get-listor för att kunna hämta från andra klasser.
 	 */
-	public List<ServerPlayer> getAllPlayers(){
+	public List<ServerPlayer> getPlayers(){
 		return players;
 	}
 	

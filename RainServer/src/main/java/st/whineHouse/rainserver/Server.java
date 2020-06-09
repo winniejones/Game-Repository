@@ -29,7 +29,6 @@ public class Server extends Host {
     private DatagramSocket socket;
     private final int MAX_PACKET_SIZE = 1024;
     private byte[] receivedDataBuffer = new byte[MAX_PACKET_SIZE * 10];
-    //Level level;
     ServerLevel level;
     private List<ServerClient> clients = new ArrayList<>();
 
@@ -157,10 +156,18 @@ public class Server extends Host {
                     projectilePacket.getDir(),
                     ProjectileType.getProjectileType(projectilePacket.getProjectileType())
             );
+            // logProjectile(projectilePacket);
             Rainserver.rainserver.level.addProjectile(projectile);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void logProjectile(ProjectilePacket projectilePacket) {
+        System.out.println("adding projectile: "
+                + projectilePacket.getProjectileType() + ", at: ("
+                + projectilePacket.getX() + ","
+                + projectilePacket.getY() + "): (x,y)");
     }
 
     private void sendMobs(InetAddress address, int port) {
